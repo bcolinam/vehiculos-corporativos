@@ -100,7 +100,7 @@ Gestión completa desde la interfaz web
 
 
 ## Estructura del Proyecto
-vehiculos-corporativos/
+## vehiculos-corporativos/
 ├── core/               # Configuración principal Django
 ├── vehiculos/          # App de gestión vehicular
 │   ├── templates/      # Templates HTML
@@ -114,7 +114,7 @@ vehiculos-corporativos/
 ├── README.md
 └── .gitignore
 
-##Seguridad
+## Seguridad
 
 Autenticación basada en Django Auth
 
@@ -137,6 +137,7 @@ Visualización avanzada de datos
 Dockerización del proyecto
 
 Despliegue productivo
+
 
 
 
