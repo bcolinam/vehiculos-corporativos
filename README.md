@@ -130,7 +130,7 @@ Acceso restringido a vistas protegidas
 Gestión centralizada de sesiones
 
 
-### Próximos Pasos
+## Próximos Pasos
 
 Implementar roles y permisos
 
@@ -143,6 +143,7 @@ Visualización avanzada de datos
 Dockerización del proyecto
 
 Despliegue productivo
+
 
 
 
