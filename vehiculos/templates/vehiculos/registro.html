@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrar Vehículo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+        }
+
+        header {
+            background-color: #2c3e50;
+            padding: 1rem 2rem;
+            color: #fff;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.4rem;
+        }
+
+        main {
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .form-container {
+            background-color: #fff;
+            width: 100%;
+            max-width: 500px;
+            padding: 2rem;
+            border-radius: 6px;
+            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        .form-container h2 {
+            margin-top: 0;
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        form p {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.45rem;
+            font-size: 0.9rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .errorlist {
+            color: #c0392b;
+            margin: 0.3rem 0 0;
+            font-size: 0.8rem;
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .actions {
+            margin-top: 1.8rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .actions button {
+            background-color: #2c3e50;
+            color: #fff;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            font-size: 0.9rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .actions button:hover {
+            background-color: #1a252f;
+        }
+
+        .actions a {
+            text-decoration: none;
+            font-size: 0.85rem;
+            color: #2c3e50;
+        }
+
+        .actions a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Registro de Vehículo</h1>
+</header>
+
+<main>
+    <div class="form-container">
+
+        <h2>Datos del vehículo</h2>
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+
+            {{ form.as_p }}
+
+            <div class="actions">
+                <a href="{% url 'vehiculos:dashboard' %}">← Volver</a>
+                <button type="submit">Guardar vehículo</button>
+            </div>
+        </form>
+
+    </div>
+</main>
+
+</body>
+</html>
