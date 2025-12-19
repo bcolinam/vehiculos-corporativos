@@ -100,19 +100,24 @@ Gestión completa desde la interfaz web
 
 
 ## Estructura del Proyecto
-## vehiculos-corporativos/
-├── core/               # Configuración principal Django
-├── vehiculos/          # App de gestión vehicular
-│   ├── templates/      # Templates HTML
-│   ├── migrations/     # Migraciones de BD
-│   ├── models.py       # Modelos de datos
-│   ├── views.py        # Lógica de vistas
-│   ├── urls.py         # Rutas de la app
-│   └── forms.py        # Formularios
-├── manage.py
-├── db.sqlite3
-├── README.md
-└── .gitignore
+
+A continuación se detalla la organización de carpetas y archivos principales:
+
+```text
+vehiculos-corporativos/
+├── core/                # Configuración principal Django
+├── vehiculos/           # App de gestión vehicular
+│   ├── templates/       # Templates HTML
+│   ├── migrations/      # Migraciones de BD
+│   ├── models.py        # Modelos de datos
+│   ├── views.py         # Lógica de vistas
+│   ├── urls.py          # Rutas de la app
+│   └── forms.py         # Formularios
+├── manage.py            # Script de administración de Django
+├── db.sqlite3           # Base de datos local (SQLite)
+├── README.md            # Documentación del proyecto
+└── .gitignore           # Archivos excluidos de Git
+```
 
 ## Seguridad
 
@@ -137,6 +142,7 @@ Visualización avanzada de datos
 Dockerización del proyecto
 
 Despliegue productivo
+
 
 
 
