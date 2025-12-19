@@ -66,6 +66,38 @@ Proveer una plataforma simple, segura y extensible para:
 ```bash
 git clone https://github.com/bcolinam/vehiculos-corporativos.git
 cd vehiculos-corporativos
+``` 
+### 2. Crear entorno virtual
+```bash
+python3 -m venv venv
+source venv/bin/activate
+``` 
+### 3. Instalar dependencias
+```bash
+pip install -r requirements.txt
+```
+### 4. Ejecutar migraciones
+```bash
+python manage.py migrate
+```
+### 5. Crear superusuario
+```bash
+python manage.py createsuperuser
+```
+### 6. Ejecutar servidor
+```bash
+python manage.py runserver
+```
+##Uso del Sistema
+
+Acceder a: http://127.0.0.1:8000
+
+Login con usuario registrado
+
+Acceso al dashboard principal
+
+Gestión completa desde la interfaz web
+
 
 ## Estructura del Proyecto
 vehiculos-corporativos/
@@ -81,5 +113,32 @@ vehiculos-corporativos/
 ├── db.sqlite3
 ├── README.md
 └── .gitignore
+
+##Seguridad
+
+Autenticación basada en Django Auth
+
+Protección CSRF activa
+
+Acceso restringido a vistas protegidas
+
+Gestión centralizada de sesiones
+
+###Próximos Pasos
+
+Implementar roles y permisos
+
+Auditoría de cambios
+
+Exportación a Excel / CSV
+
+Visualización avanzada de datos
+
+Dockerización del proyecto
+
+Despliegue productivo
+
+
+
 
 
