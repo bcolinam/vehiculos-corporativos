@@ -66,3 +66,20 @@ Proveer una plataforma simple, segura y extensible para:
 ```bash
 git clone https://github.com/bcolinam/vehiculos-corporativos.git
 cd vehiculos-corporativos
+
+## Estructura del Proyecto
+vehiculos-corporativos/
+├── core/               # Configuración principal Django
+├── vehiculos/          # App de gestión vehicular
+│   ├── templates/      # Templates HTML
+│   ├── migrations/     # Migraciones de BD
+│   ├── models.py       # Modelos de datos
+│   ├── views.py        # Lógica de vistas
+│   ├── urls.py         # Rutas de la app
+│   └── forms.py        # Formularios
+├── manage.py
+├── db.sqlite3
+├── README.md
+└── .gitignore
+
+
