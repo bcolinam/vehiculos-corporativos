@@ -1,4 +1,4 @@
-# 🚗 Sistema de Gestión de Vehículos Corporativos
+# Sistema de Gestión de Vehículos Corporativos
 
 ## Descripción
 Sistema web desarrollado en **Django** para la administración centralizada de vehículos corporativos, permitiendo registrar, asignar, modificar y visualizar vehículos asociados a usuarios del sistema.
@@ -88,7 +88,7 @@ python manage.py createsuperuser
 ```bash
 python manage.py runserver
 ```
-##Uso del Sistema
+## Uso del Sistema
 
 Acceder a: http://127.0.0.1:8000
 
@@ -137,6 +137,7 @@ Visualización avanzada de datos
 Dockerización del proyecto
 
 Despliegue productivo
+
 
 
 
