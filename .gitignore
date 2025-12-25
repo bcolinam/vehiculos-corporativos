@@ -1,19 +1,6 @@
-# Python
-__pycache__/
 *.pyc
-*.pyo
-*.pyd
-.env
-venv/
-env/
-
-# Django
+__pycache__/
 db.sqlite3
-*.log
-staticfiles/
-media/
-
-# IDEs
 .vscode/
-.idea/
-
+.env
+media/

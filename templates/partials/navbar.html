@@ -1,0 +1,74 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm mb-4">
+    <div class="container">
+        <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="/">
+            <i data-lucide="shield-check" class="text-primary"></i> SGV SYSTEM
+        </a>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'vehiculos:dashboard' %}">
+                        <i data-lucide="layout-dashboard" class="me-1" style="width: 18px;"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'pages:page_list' %}">
+                        <i data-lucide="files" class="me-1" style="width: 18px;"></i> Páginas
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'core:about' %}">
+                        <i data-lucide="info" class="me-1" style="width: 18px;"></i> Acerca de
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="navbar-nav ms-auto">
+                {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" id="userDropdown" data-bs-toggle="dropdown">
+                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 28px; height: 28px; font-size: 0.8rem;">
+                                {{ user.username|slice:":1"|upper }}
+                            </div>
+                            {{ user.username }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
+                            <li>
+                                <a class="dropdown-item py-2" href="{% url 'accounts:profile' %}">
+                                    <i data-lucide="user" class="me-2 text-muted" style="width: 16px;"></i> Mi Perfil
+                                </a>
+                            </li>
+                            
+                            {% if user.is_staff %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item py-2 text-primary fw-bold" href="{% url 'accounts:signup' %}">
+                                        <i data-lucide="user-plus" class="me-2" style="width: 16px;"></i> Crear Usuario
+                                    </a>
+                                </li>
+                            {% endif %}
+                            
+                            <li><hr class="dropdown-divider"></li>
+                            <li class="px-3 py-1">
+                                <form action="{% url 'accounts:logout' %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-outline-danger btn-sm w-100 d-flex align-items-center justify-content-center gap-2">
+                                        <i data-lucide="log-out" style="width: 14px;"></i> Salir
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-primary text-white px-4" href="{% url 'accounts:login' %}">Iniciar Sesión</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

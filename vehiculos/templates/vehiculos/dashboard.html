@@ -1,283 +1,150 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>SGV | Panel de Control</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% extends "base.html" %}
 
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% block title %}SGV | Panel de Control{% endblock %}
 
-    <style>
-        :root {
-            --primary: #4f46e5;
-            --primary-dark: #4338ca;
-            --secondary: #10b981;
-            --bg: #f8fafc;
-            --card: #ffffff;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
-            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-        }
+{% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
 
-        * { box-sizing: border-box; }
+<style>
+    :root {
+        --primary: #4f46e5;
+        --primary-dark: #4338ca;
+        --secondary: #10b981;
+        --bg: #f8fafc;
+        --card: #ffffff;
+        --text-main: #1e293b;
+        --text-muted: #64748b;
+        --border: #e2e8f0;
+        --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1),
+                  0 2px 4px -2px rgb(0 0 0 / 0.1);
+    }
 
-        body {
-            margin: 0;
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg);
-            color: var(--text-main);
-            line-height: 1.5;
-        }
+    .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
 
-        /* HEADER */
-        header {
-            background-color: var(--card);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
+    .metric-card {
+        background: var(--card);
+        border-radius: 12px;
+        padding: 1.5rem;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
 
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            color: var(--primary);
-        }
+    .metric-card h4 {
+        margin: 0;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
 
-        header h1 {
-            margin: 0;
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--text-main);
-        }
+    .metric-value {
+        display: block;
+        font-size: 1.9rem;
+        font-weight: 700;
+        margin-top: 0.3rem;
+    }
 
-        .user-area {
-            display: flex;
-            align-items: center;
-            gap: 1.25rem;
-        }
+    .charts-container {
+        display: grid;
+        grid-template-columns: 1.6fr 1fr;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
 
-        .avatar {
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            color: #fff;
-            box-shadow: var(--shadow);
-        }
+    .chart-card {
+        background: var(--card);
+        border-radius: 12px;
+        padding: 1.5rem;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+    }
 
-        .btn-logout {
-            background: none;
-            border: 1px solid var(--border);
-            color: var(--text-muted);
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-size: 0.875rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
+    .chart-card h3 {
+        margin: top 0;
+        margin-bottom: 1.25rem;
+        font-size: 1rem;
+        font-weight: 600;
+    }
 
-        .btn-logout:hover {
-            background-color: #fee2e2;
-            color: #dc2626;
-            border-color: #fecaca;
-        }
+    .canvas-wrapper {
+        position: relative;
+        height: 300px;
+    }
 
-        /* MAIN CONTENT */
-        main {
-            padding: 2rem;
-            max-width: 1280px;
-            margin: auto;
-        }
+    .page-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
 
-        /* METRIC CARDS */
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .metric-card {
-            background: var(--card);
-            border-radius: 12px;
-            padding: 1.5rem;
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .metric-info h3 {
-            margin: 0;
-            font-size: 0.875rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.025em;
-        }
-
-        .metric-value {
-            display: block;
-            font-size: 1.875rem;
-            font-weight: 700;
-            margin-top: 0.25rem;
-        }
-
-        .metric-icon {
-            padding: 0.75rem;
-            border-radius: 12px;
-            background-color: var(--bg);
-            color: var(--primary);
-        }
-
-        /* CHARTS SECTION */
+    @media (max-width: 1024px) {
         .charts-container {
-            display: grid;
-            grid-template-columns: 1.6fr 1fr;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+            grid-template-columns: 1fr;
         }
+    }
+</style>
+{% endblock %}
 
-        .chart-card {
-            background: var(--card);
-            border-radius: 12px;
-            padding: 1.5rem;
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow);
-        }
-
-        .chart-card h2 {
-            font-size: 1rem;
-            margin-top: 0;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .canvas-wrapper {
-            position: relative;
-            height: 300px;
-        }
-
-        /* ACTIONS */
-        .page-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 1rem;
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.875rem;
-            text-decoration: none;
-            transition: all 0.2s;
-            cursor: pointer;
-        }
-
-        .btn-primary {
-            background-color: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background-color: var(--primary-dark);
-            transform: translateY(-1px);
-        }
-
-        .btn-secondary {
-            background-color: white;
-            color: var(--text-main);
-            border: 1px solid var(--border);
-        }
-
-        .btn-secondary:hover {
-            background-color: var(--bg);
-        }
-
-        @media (max-width: 1024px) {
-            .charts-container { grid-template-columns: 1fr; }
-        }
-    </style>
-</head>
-
-<body>
-
-<header>
-    <div class="brand">
-        <i data-lucide="car"></i>
-        <h1>Gestión de Flota</h1>
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold">Panel de Control</h2>
+        <span class="badge bg-light text-dark border p-2">
+            Usuario: {{ user.get_full_name|default:user.username }} 
+            {% if user.is_staff %}(Admin){% endif %}
+        </span>
     </div>
-    <div class="user-area">
-        <div class="avatar" title="{{ request.user.username }}">
-            {{ request.user.username|slice:":1"|upper }}
-        </div>
-        <form method="post" action="{% url 'logout' %}" id="logout-form">
-            {% csrf_token %}
-            <button type="submit" class="btn-logout">
-                <i data-lucide="log-out" size="16"></i>
-                Salir
-            </button>
-        </form>
-    </div>
-</header>
 
-<main>
     <div class="metrics-grid">
         <div class="metric-card">
-            <div class="metric-info">
-                <h3>Total Vehículos</h3>
+            <div>
+                <h4>Total vehículos</h4>
                 <span class="metric-value">{{ metricas.total|default:0 }}</span>
             </div>
-            <div class="metric-icon"><i data-lucide="database"></i></div>
+            <i data-lucide="database" class="text-primary"></i>
         </div>
         <div class="metric-card">
-            <div class="metric-info">
-                <h3>Activos</h3>
-                <span class="metric-value" style="color: var(--secondary)">{{ metricas.activos|default:0 }}</span>
+            <div>
+                <h4>Activos</h4>
+                <span class="metric-value" style="color: var(--secondary)">
+                    {{ metricas.activos|default:0 }}
+                </span>
             </div>
-            <div class="metric-icon" style="color: var(--secondary)"><i data-lucide="check-circle"></i></div>
+            <i data-lucide="check-circle" style="color: var(--secondary)"></i>
         </div>
         <div class="metric-card">
-            <div class="metric-info">
-                <h3>Inactivos</h3>
-                <span class="metric-value" style="color: #ef4444;">{{ metricas.inactivos|default:0 }}</span>
+            <div>
+                <h4>Inactivos</h4>
+                <span class="metric-value" style="color: #ef4444">
+                    {{ metricas.inactivos|default:0 }}
+                </span>
             </div>
-            <div class="metric-icon" style="color: #ef4444;"><i data-lucide="alert-circle"></i></div>
+            <i data-lucide="alert-circle" style="color: #ef4444"></i>
         </div>
     </div>
 
     <div class="charts-container">
+        {% if user.is_staff %}
         <div class="chart-card">
-            <h2><i data-lucide="bar-chart-3"></i> Vehículos por Usuario</h2>
+            <h3>Vehículos por usuario</h3>
             <div class="canvas-wrapper">
                 <canvas id="barChart"></canvas>
             </div>
         </div>
+        {% endif %}
 
-        <div class="chart-card">
-            <h2><i data-lucide="pie-chart"></i> Disponibilidad</h2>
+        <div class="chart-card {% if not user.is_staff %}w-100{% endif %}">
+            <h3>Estado de Disponibilidad</h3>
             <div class="canvas-wrapper">
                 <canvas id="pieChart"></canvas>
             </div>
@@ -285,83 +152,80 @@
     </div>
 
     <div class="page-actions">
-        <a href="{% url 'vehiculos:detalle' %}" class="btn btn-secondary">
-            <i data-lucide="list"></i> Ver Detalle
+        <a href="{% url 'vehiculos:detalle_vehiculos' %}" class="btn btn-outline-secondary d-flex align-items-center gap-2">
+            <i data-lucide="list" style="width: 18px"></i> Ver listado completo
         </a>
-        <a href="{% url 'vehiculos:registrar_vehiculo' %}" class="btn btn-primary">
-            <i data-lucide="plus"></i> Nuevo Vehículo
+        
+        {% if user.is_staff %}
+        <a href="{% url 'vehiculos:registro' %}" class="btn btn-primary d-flex align-items-center gap-2">
+            <i data-lucide="plus-circle" style="width: 18px"></i> Nuevo vehículo
         </a>
+        {% endif %}
     </div>
-</main>
+</div>
 
-{{ metricas.por_usuario|json_script:"datos-usuarios" }}
+{% if user.is_staff %}
+    {{ metricas.stats_usuarios|json_script:"datos-usuarios" }}
+{% endif %}
 
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     lucide.createIcons();
 
-    document.addEventListener('DOMContentLoaded', function() {
-        const scriptElement = document.getElementById('datos-usuarios');
-        let datosRaw = scriptElement ? JSON.parse(scriptElement.textContent) : [];
-
-        Chart.defaults.font.family = "'Inter', sans-serif";
-        Chart.defaults.color = '#64748b';
-
-        // --- Gráfico de Barras ---
-        const barCtx = document.getElementById("barChart");
-        if (barCtx) {
-            new Chart(barCtx, {
-                type: "bar",
-                data: {
-                    labels: datosRaw.map(i => i.usuario__username || "N/A"),
-                    datasets: [{
-                        label: "Unidades",
-                        data: datosRaw.map(i => i.total || 0),
-                        backgroundColor: '#4f46e5',
-                        // Se eliminó borderRadius para que los bordes sean rectos
-                        barThickness: 30
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { grid: { display: false } },
-                        y: { beginAtZero: true, ticks: { stepSize: 1 } }
-                    }
+    // Lógica para Gráfico de Barras (Solo si el script existe en el DOM)
+    const scriptDatos = document.getElementById('datos-usuarios');
+    if (scriptDatos) {
+        const datosUsuarios = JSON.parse(scriptDatos.textContent);
+        new Chart(document.getElementById('barChart'), {
+            type: 'bar',
+            data: {
+                labels: datosUsuarios.map(d => d.usuario__username || 'N/A'),
+                datasets: [{
+                    label: 'Vehículos',
+                    data: datosUsuarios.map(d => d.total || 0),
+                    backgroundColor: '#4f46e5',
+                    borderRadius: 6,
+                    barThickness: 25
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, ticks: { precision: 0 } },
+                    x: { grid: { display: false } }
                 }
-            });
-        }
+            }
+        });
+    }
 
-        // --- Gráfico de Dona ---
-        const pieCtx = document.getElementById("pieChart");
-        if (pieCtx) {
-            new Chart(pieCtx, {
-                type: "doughnut",
-                data: {
-                    labels: ["Activos", "Inactivos"],
-                    datasets: [{
-                        data: [
-                            Number("{{ metricas.activos|default:0 }}"),
-                            Number("{{ metricas.inactivos|default:0 }}")
-                        ],
-                        backgroundColor: ["#10b981", "#ef4444"],
-                        hoverOffset: 4,
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '70%',
-                    plugins: {
-                        legend: { position: "bottom", labels: { usePointStyle: true, padding: 20 } }
-                    }
-                }
-            });
+    // Gráfico de Dona (Para todos)
+    new Chart(document.getElementById('pieChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Activos', 'Inactivos'],
+            datasets: [{
+                data: [
+                    {{ metricas.activos|default:0 }},
+                    {{ metricas.inactivos|default:0 }}
+                ],
+                backgroundColor: ['#10b981', '#ef4444'],
+                hoverOffset: 4,
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '70%',
+            plugins: {
+                legend: { position: 'bottom', labels: { padding: 20 } }
+            }
         }
     });
 </script>
-
-</body>
-</html>
+{% endblock %}

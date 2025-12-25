@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio | Sistema de Gestión{% endblock %}
+
+{% block content %}
+<section>
+    <h1>Bienvenido al Sistema de Gestión de Vehículos</h1>
+
+    <p>
+        Esta plataforma permite administrar vehículos corporativos, 
+        asignarlos a usuarios y llevar un control centralizado de la flota.
+    </p>
+
+    <ul>
+        <li>Gestión de vehículos</li>
+        <li>Control por usuario</li>
+        <li>Panel de métricas</li>
+        <li>Sistema de perfiles</li>
+        <li>Módulo de mensajería interna</li>
+    </ul>
+
+    {% if not user.is_authenticated %}
+        <p>
+            Para acceder a las funcionalidades completas, por favor
+            <a href="{% url 'accounts:login' %}">inicia sesión</a>.
+        </p>
+    {% endif %}
+</section>
+{% endblock %}

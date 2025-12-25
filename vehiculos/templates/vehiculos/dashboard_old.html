@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>SGV | Panel de Control</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --secondary: #10b981;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.5;
+        }
+
+        /* HEADER */
+        header {
+            background-color: var(--card);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--primary);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #fff;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-logout {
+            background: none;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-logout:hover {
+            background-color: #fee2e2;
+            color: #dc2626;
+            border-color: #fecaca;
+        }
+
+        /* MAIN CONTENT */
+        main {
+            padding: 2rem;
+            max-width: 1280px;
+            margin: auto;
+        }
+
+        /* METRIC CARDS */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .metric-info h3 {
+            margin: 0;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+
+        .metric-value {
+            display: block;
+            font-size: 1.875rem;
+            font-weight: 700;
+            margin-top: 0.25rem;
+        }
+
+        .metric-icon {
+            padding: 0.75rem;
+            border-radius: 12px;
+            background-color: var(--bg);
+            color: var(--primary);
+        }
+
+        /* CHARTS SECTION */
+        .charts-container {
+            display: grid;
+            grid-template-columns: 1.6fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+
+        .chart-card h2 {
+            font-size: 1rem;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .canvas-wrapper {
+            position: relative;
+            height: 300px;
+        }
+
+        /* ACTIONS */
+        .page-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background-color: white;
+            color: var(--text-main);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--bg);
+        }
+
+        @media (max-width: 1024px) {
+            .charts-container { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="brand">
+        <i data-lucide="car"></i>
+        <h1>Gestión de Flota</h1>
+    </div>
+    <div class="user-area">
+        <div class="avatar" title="{{ request.user.username }}">
+            {{ request.user.username|slice:":1"|upper }}
+        </div>
+        <form method="post" action="{% url 'logout' %}" id="logout-form">
+            {% csrf_token %}
+            <button type="submit" class="btn-logout">
+                <i data-lucide="log-out" size="16"></i>
+                Salir
+            </button>
+        </form>
+    </div>
+</header>
+
+<main>
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <div class="metric-info">
+                <h3>Total Vehículos</h3>
+                <span class="metric-value">{{ metricas.total|default:0 }}</span>
+            </div>
+            <div class="metric-icon"><i data-lucide="database"></i></div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-info">
+                <h3>Activos</h3>
+                <span class="metric-value" style="color: var(--secondary)">{{ metricas.activos|default:0 }}</span>
+            </div>
+            <div class="metric-icon" style="color: var(--secondary)"><i data-lucide="check-circle"></i></div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-info">
+                <h3>Inactivos</h3>
+                <span class="metric-value" style="color: #ef4444;">{{ metricas.inactivos|default:0 }}</span>
+            </div>
+            <div class="metric-icon" style="color: #ef4444;"><i data-lucide="alert-circle"></i></div>
+        </div>
+    </div>
+
+    <div class="charts-container">
+        <div class="chart-card">
+            <h2><i data-lucide="bar-chart-3"></i> Vehículos por Usuario</h2>
+            <div class="canvas-wrapper">
+                <canvas id="barChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <h2><i data-lucide="pie-chart"></i> Disponibilidad</h2>
+            <div class="canvas-wrapper">
+                <canvas id="pieChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-actions">
+        <a href="{% url 'vehiculos:detalle' %}" class="btn btn-secondary">
+            <i data-lucide="list"></i> Ver Detalle
+        </a>
+        <a href="{% url 'vehiculos:registrar_vehiculo' %}" class="btn btn-primary">
+            <i data-lucide="plus"></i> Nuevo Vehículo
+        </a>
+    </div>
+</main>
+
+{{ metricas.por_usuario|json_script:"datos-usuarios" }}
+
+<script>
+    lucide.createIcons();
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const scriptElement = document.getElementById('datos-usuarios');
+        let datosRaw = scriptElement ? JSON.parse(scriptElement.textContent) : [];
+
+        Chart.defaults.font.family = "'Inter', sans-serif";
+        Chart.defaults.color = '#64748b';
+
+        // --- Gráfico de Barras ---
+        const barCtx = document.getElementById("barChart");
+        if (barCtx) {
+            new Chart(barCtx, {
+                type: "bar",
+                data: {
+                    labels: datosRaw.map(i => i.usuario__username || "N/A"),
+                    datasets: [{
+                        label: "Unidades",
+                        data: datosRaw.map(i => i.total || 0),
+                        backgroundColor: '#4f46e5',
+                        // Se eliminó borderRadius para que los bordes sean rectos
+                        barThickness: 30
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                    }
+                }
+            });
+        }
+
+        // --- Gráfico de Dona ---
+        const pieCtx = document.getElementById("pieChart");
+        if (pieCtx) {
+            new Chart(pieCtx, {
+                type: "doughnut",
+                data: {
+                    labels: ["Activos", "Inactivos"],
+                    datasets: [{
+                        data: [
+                            Number("{{ metricas.activos|default:0 }}"),
+                            Number("{{ metricas.inactivos|default:0 }}")
+                        ],
+                        backgroundColor: ["#10b981", "#ef4444"],
+                        hoverOffset: 4,
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '70%',
+                    plugins: {
+                        legend: { position: "bottom", labels: { usePointStyle: true, padding: 20 } }
+                    }
+                }
+            });
+        }
+    });
+</script>
+
+</body>
+</html>
