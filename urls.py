@@ -1,0 +1,21 @@
+from django.contrib import admin
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+
+urlpatterns = [
+    path("admin/", admin.site.urls),
+
+    # Core (HOME, ABOUT) → aquí se crea el namespace
+    path("", include("core.urls")),
+
+    # Apps
+    path("accounts/", include("accounts.urls")),
+    path("vehiculos/", include("vehiculos.urls")),
+    path("pages/", include("pages.urls")),
+    path("messages/", include("messaging.urls")),
+    path("ckeditor/", include("ckeditor_uploader.urls")),
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

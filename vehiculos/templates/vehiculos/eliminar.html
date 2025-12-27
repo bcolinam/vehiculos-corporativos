@@ -1,70 +1,883 @@
 {% extends "base.html" %}
 
-{% block title %}SGV | Eliminar Vehículo{% endblock %}
+{% block title %}SGV | Eliminar Vehículo - {{ vehiculo.patente }}{% endblock %}
 
 {% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+
 <style>
-    .delete-container {
-        max-width: 500px;
-        margin: 4rem auto;
+    :root {
+        --primary: #4f46e5;
+        --primary-dark: #3730a3;
+        --primary-light: #e0e7ff;
+        --secondary: #10b981;
+        --secondary-dark: #059669;
+        --danger: #ef4444;
+        --danger-dark: #dc2626;
+        --warning: #f59e0b;
+        --info: #3b82f6;
+        --bg: #f8fafc;
+        --card: #ffffff;
+        --text-main: #1e293b;
+        --text-muted: #64748b;
+        --text-light: #94a3b8;
+        --border: #e2e8f0;
+        --border-light: #f1f5f9;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        --radius: 12px;
+        --radius-sm: 8px;
     }
-    .card-confirm {
-        border: none;
-        border-top: 5px solid #ef4444; /* Rojo de advertencia */
-        border-radius: 12px;
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
     }
-    .icon-box {
+
+    .page-container {
+        max-width: 560px;
+        width: 100%;
+        animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Breadcrumb */
+    .breadcrumb-nav {
+        margin-bottom: 2rem;
+    }
+
+    .breadcrumb {
+        background: transparent;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .breadcrumb-item {
+        font-size: 0.875rem;
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .breadcrumb-item a {
+        color: var(--primary);
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .breadcrumb-item a:hover {
+        color: var(--primary-dark);
+        text-decoration: underline;
+    }
+
+    .breadcrumb-item.active {
+        color: var(--text-light);
+    }
+
+    /* Confirmation Card */
+    .confirmation-card {
+        background: var(--card);
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-lg);
+        overflow: hidden;
+        border-top: 4px solid var(--danger);
+        position: relative;
+    }
+
+    .confirmation-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--danger) 0%, #dc2626 100%);
+    }
+
+    .confirmation-header {
+        padding: 2.5rem 2.5rem 1.5rem;
+        text-align: center;
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(239, 68, 68, 0.02) 100%);
+    }
+
+    .confirmation-icon {
         width: 80px;
         height: 80px;
-        background-color: #fef2f2;
-        color: #ef4444;
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(220, 38, 38, 0.1) 100%);
+        border: 2px solid rgba(239, 68, 68, 0.3);
+        color: var(--danger);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         margin: 0 auto 1.5rem;
+        animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+        0% {
+            transform: scale(1);
+            box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+        }
+        70% {
+            transform: scale(1.05);
+            box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+        }
+        100% {
+            transform: scale(1);
+            box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+        }
+    }
+
+    .confirmation-icon i {
+        width: 36px;
+        height: 36px;
+    }
+
+    .confirmation-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--text-main);
+        margin: 0 0 0.5rem 0;
+        line-height: 1.2;
+    }
+
+    .confirmation-subtitle {
+        font-size: 1rem;
+        color: var(--text-muted);
+        margin: 0;
+    }
+
+    .confirmation-body {
+        padding: 2rem 2.5rem;
+    }
+
+    /* Warning Alert */
+    .warning-alert {
+        background: linear-gradient(135deg, rgba(254, 226, 226, 0.4) 0%, rgba(254, 202, 202, 0.2) 100%);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        color: var(--danger-dark);
+        border-radius: var(--radius-sm);
+        padding: 1.25rem;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        animation: shake 0.5s ease;
+    }
+
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+        20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+
+    .warning-alert i {
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+        margin-top: 0.125rem;
+    }
+
+    .warning-alert-content {
+        flex: 1;
+    }
+
+    .warning-alert-title {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+
+    .warning-alert-description {
+        font-size: 0.875rem;
+        opacity: 0.9;
+        line-height: 1.5;
+    }
+
+    /* Vehicle Info */
+    .vehicle-info {
+        background: var(--bg);
+        border-radius: var(--radius-sm);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        border: 1px solid var(--border-light);
+    }
+
+    .info-title {
+        font-size: 0.9375rem;
+        font-weight: 600;
+        color: var(--text-main);
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .info-title i {
+        color: var(--danger);
+        width: 16px;
+        height: 16px;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    .info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .info-label {
+        font-size: 0.8125rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .info-value {
+        font-weight: 500;
+        color: var(--text-main);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .patente-value {
+        font-family: 'Monaco', 'Consolas', monospace;
+        font-weight: 700;
+        font-size: 1.125rem;
+        color: var(--danger-dark);
+        background: rgba(239, 68, 68, 0.1);
+        padding: 0.375rem 0.75rem;
+        border-radius: 6px;
+        display: inline-block;
+    }
+
+    /* Impact Section */
+    .impact-section {
+        background: linear-gradient(135deg, rgba(254, 226, 226, 0.1) 0%, rgba(254, 202, 202, 0.05) 100%);
+        border: 1px solid rgba(239, 68, 68, 0.1);
+        border-radius: var(--radius-sm);
+        padding: 1.25rem;
+        margin-bottom: 2rem;
+    }
+
+    .impact-title {
+        font-size: 0.9375rem;
+        font-weight: 600;
+        color: var(--danger-dark);
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .impact-title i {
+        width: 16px;
+        height: 16px;
+    }
+
+    .impact-list {
+        margin: 0;
+        padding-left: 1.5rem;
+    }
+
+    .impact-list li {
+        font-size: 0.875rem;
+        color: var(--text-muted);
+        margin-bottom: 0.5rem;
+        line-height: 1.4;
+    }
+
+    .impact-list li strong {
+        color: var(--text-main);
+    }
+
+    /* Form Actions */
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--border-light);
+    }
+
+    .btn {
+        padding: 1rem 2rem;
+        border-radius: var(--radius-sm);
+        font-weight: 500;
+        font-size: 0.9375rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        transition: all 0.2s ease;
+        border: 1px solid transparent;
+        cursor: pointer;
+        text-decoration: none;
+        flex: 1;
+        justify-content: center;
+    }
+
+    .btn-danger {
+        background: linear-gradient(135deg, var(--danger) 0%, var(--danger-dark) 100%);
+        color: white;
+        border-color: var(--danger);
+        box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.1);
+    }
+
+    .btn-danger:hover {
+        background: linear-gradient(135deg, var(--danger-dark) 0%, #b91c1c 100%);
+        border-color: var(--danger-dark);
+        transform: translateY(-1px);
+        box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.2);
+    }
+
+    .btn-danger:active {
+        transform: translateY(0);
+    }
+
+    .btn-secondary {
+        background: var(--card);
+        color: var(--text-muted);
+        border-color: var(--border);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .btn-secondary:hover {
+        background: var(--bg);
+        border-color: var(--text-light);
+        color: var(--text-main);
+        transform: translateY(-1px);
+        box-shadow: var(--shadow);
+    }
+
+    .btn i {
+        width: 18px;
+        height: 18px;
+    }
+
+    /* Confirmation Checkbox */
+    .confirmation-check {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background: var(--bg);
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border-light);
+    }
+
+    .confirmation-check-input {
+        width: 20px;
+        height: 20px;
+        border: 2px solid var(--border);
+        border-radius: 4px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+    }
+
+    .confirmation-check-input:checked {
+        background-color: var(--danger);
+        border-color: var(--danger);
+    }
+
+    .confirmation-check-input:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+    }
+
+    .confirmation-check-label {
+        font-size: 0.875rem;
+        color: var(--text-main);
+        cursor: pointer;
+        user-select: none;
+        flex: 1;
+        line-height: 1.4;
+    }
+
+    .confirmation-check-label strong {
+        color: var(--danger-dark);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .confirmation-header {
+            padding: 2rem 1.5rem 1rem;
+        }
+        
+        .confirmation-body {
+            padding: 1.5rem;
+        }
+        
+        .form-actions {
+            flex-direction: column;
+        }
+        
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .breadcrumb {
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .confirmation-title {
+            font-size: 1.5rem;
+        }
+        
+        .confirmation-subtitle {
+            font-size: 0.9375rem;
+        }
+        
+        .btn {
+            padding: 0.875rem 1.5rem;
+        }
+        
+        .confirmation-icon {
+            width: 64px;
+            height: 64px;
+        }
+        
+        .confirmation-icon i {
+            width: 28px;
+            height: 28px;
+        }
+    }
+
+    /* Loading State */
+    .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+    }
+
+    .loading-spinner {
+        width: 48px;
+        height: 48px;
+        border: 3px solid var(--border);
+        border-top-color: var(--danger);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        to { transform: rotate(360deg); }
+    }
+
+    /* Success/Error Messages */
+    .message-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .message-card {
+        background: var(--card);
+        border-radius: var(--radius);
+        padding: 2.5rem;
+        max-width: 400px;
+        width: 90%;
+        text-align: center;
+        box-shadow: var(--shadow-lg);
+        animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container delete-container">
-    <div class="card card-confirm text-center p-4">
-        <div class="card-body">
-            <div class="icon-box">
-                <i data-lucide="alert-triangle" style="width: 40px; height: 40px;"></i>
+<div class="page-container">
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb-nav" aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'vehiculos:dashboard' %}">
+                    <i data-lucide="home" style="width: 16px; height: 16px;"></i>
+                    Inicio
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'vehiculos:detalle_vehiculos' %}">Vehículos</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'vehiculos:detalle_vehiculos' %}">Listado</a>
+            </li>
+            <li class="breadcrumb-item active">
+                <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
+                Eliminar
+            </li>
+        </ol>
+    </nav>
+
+    <!-- Confirmation Card -->
+    <div class="confirmation-card">
+        <div class="confirmation-header">
+            <div class="confirmation-icon">
+                <i data-lucide="alert-triangle"></i>
             </div>
             
-            <h2 class="fw-bold text-dark mb-3">¿Confirmar eliminación?</h2>
-            
-            <p class="text-muted mb-4">
-                Estás a punto de borrar permanentemente el vehículo con patente 
-                <span class="badge bg-dark fs-6">{{ vehiculo.patente }}</span>.<br>
-                <small class="text-danger">Esta acción no se puede deshacer.</small>
-            </p>
+            <h1 class="confirmation-title">Eliminar Vehículo</h1>
+            <p class="confirmation-subtitle">Confirmación requerida</p>
+        </div>
+        
+        <div class="confirmation-body">
+            <!-- Warning Alert -->
+            <div class="warning-alert">
+                <i data-lucide="alert-octagon"></i>
+                <div class="warning-alert-content">
+                    <div class="warning-alert-title">Acción irreversible</div>
+                    <div class="warning-alert-description">
+                        Estás a punto de eliminar permanentemente un vehículo del sistema.
+                        Esta acción no se puede deshacer.
+                    </div>
+                </div>
+            </div>
 
-            <form method="post">
+            <!-- Vehicle Information -->
+            <div class="vehicle-info">
+                <div class="info-title">
+                    <i data-lucide="truck"></i>
+                    Vehículo a eliminar
+                </div>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Patente</span>
+                        <span class="patente-value">{{ vehiculo.patente|upper }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Marca y Modelo</span>
+                        <span class="info-value">
+                            <i data-lucide="car" style="width: 14px; height: 14px;"></i>
+                            {{ vehiculo.marca }} {{ vehiculo.modelo }}
+                        </span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Responsable</span>
+                        <span class="info-value">
+                            <i data-lucide="user" style="width: 14px; height: 14px;"></i>
+                            {{ vehiculo.usuario.get_full_name|default:vehiculo.usuario.username }}
+                        </span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Estado</span>
+                        <span class="info-value">
+                            {% if vehiculo.activo %}
+                                <i data-lucide="check-circle" style="width: 14px; height: 14px; color: var(--secondary);"></i>
+                                Activo
+                            {% else %}
+                                <i data-lucide="x-circle" style="width: 14px; height: 14px; color: var(--danger);"></i>
+                                Inactivo
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Impact Section -->
+            <div class="impact-section">
+                <div class="impact-title">
+                    <i data-lucide="alert-circle"></i>
+                    ¿Qué se eliminará?
+                </div>
+                <ul class="impact-list">
+                    <li>Toda la <strong>información del vehículo</strong> será eliminada permanentemente</li>
+                    <li>Los <strong>datos técnicos</strong> no podrán ser recuperados</li>
+                    <li>El <strong>historial de asignaciones</strong> se perderá</li>
+                    <li>Esta acción afectará <strong>reportes y estadísticas</strong></li>
+                </ul>
+            </div>
+
+            <!-- Confirmation Form -->
+            <form method="post" novalidate id="deleteForm">
                 {% csrf_token %}
                 
-                <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-danger btn-lg py-2">
-                        <i data-lucide="trash-2" class="me-2" style="width: 18px"></i> 
-                        Sí, eliminar definitivamente
-                    </button>
-                    
-                    <a href="{% url 'vehiculos:detalle_vehiculos' %}" class="btn btn-light py-2">
-                        No, cancelar y volver
+                <!-- Confirmation Check -->
+                <div class="confirmation-check">
+                    <input type="checkbox" 
+                           id="confirmDelete" 
+                           class="confirmation-check-input"
+                           required>
+                    <label for="confirmDelete" class="confirmation-check-label">
+                        <strong>Confirmo que entiendo las consecuencias</strong> de esta acción y 
+                        que soy consciente de que la eliminación es permanente e irreversible.
+                        Deseo proceder con la eliminación del vehículo 
+                        <strong>{{ vehiculo.patente|upper }}</strong>.
+                    </label>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <a href="{% url 'vehiculos:detalle_vehiculos' %}" class="btn btn-secondary">
+                        <i data-lucide="x"></i>
+                        Cancelar y volver
                     </a>
+                    <button type="submit" 
+                            class="btn btn-danger" 
+                            id="deleteButton"
+                            disabled>
+                        <i data-lucide="trash-2"></i>
+                        Eliminar permanentemente
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+<!-- Message Templates -->
+<template id="successTemplate">
+    <div class="message-overlay">
+        <div class="message-card">
+            <div style="width: 64px; height: 64px; background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); color: var(--secondary-dark); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                <i data-lucide="check-circle" style="width: 32px; height: 32px;"></i>
+            </div>
+            <h3 style="font-size: 1.5rem; font-weight: 600; color: var(--text-main); margin-bottom: 0.5rem;">
+                Vehículo eliminado
+            </h3>
+            <p style="color: var(--text-muted); margin-bottom: 2rem; line-height: 1.5;">
+                El vehículo ha sido eliminado exitosamente del sistema.
+            </p>
+            <a href="{% url 'vehiculos:detalle_vehiculos' %}" class="btn btn-primary" style="width: 100%;">
+                <i data-lucide="arrow-left"></i>
+                Volver al listado
+            </a>
+        </div>
+    </div>
+</template>
+
+<template id="errorTemplate">
+    <div class="message-overlay">
+        <div class="message-card">
+            <div style="width: 64px; height: 64px; background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); color: var(--danger-dark); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                <i data-lucide="x-circle" style="width: 32px; height: 32px;"></i>
+            </div>
+            <h3 style="font-size: 1.5rem; font-weight: 600; color: var(--text-main); margin-bottom: 0.5rem;">
+                Error al eliminar
+            </h3>
+            <p style="color: var(--text-muted); margin-bottom: 2rem; line-height: 1.5;">
+                No se pudo eliminar el vehículo. Por favor, intenta nuevamente.
+            </p>
+            <div style="display: flex; gap: 1rem;">
+                <button onclick="closeMessage()" class="btn btn-secondary" style="flex: 1;">
+                    Cerrar
+                </button>
+                <button onclick="retryDelete()" class="btn btn-danger" style="flex: 1;">
+                    <i data-lucide="refresh-cw"></i>
+                    Reintentar
+                </button>
+            </div>
+        </div>
+    </div>
+</template>
 {% endblock %}
 
 {% block extra_js %}
 <script>
+    // Initialize icons
     lucide.createIcons();
+
+    // Elements
+    const deleteForm = document.getElementById('deleteForm');
+    const confirmCheckbox = document.getElementById('confirmDelete');
+    const deleteButton = document.getElementById('deleteButton');
+    const cancelButton = document.querySelector('a.btn-secondary');
+
+    // Enable/disable delete button based on checkbox
+    confirmCheckbox.addEventListener('change', function() {
+        deleteButton.disabled = !this.checked;
+    });
+
+    // Form submission handling
+    deleteForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        if (!confirmCheckbox.checked) {
+            // Shake animation for checkbox
+            confirmCheckbox.parentElement.style.animation = 'shake 0.5s ease';
+            setTimeout(() => {
+                confirmCheckbox.parentElement.style.animation = '';
+            }, 500);
+            return;
+        }
+        
+        // Final confirmation dialog
+        if (!confirm(`⚠️ CONFIRMACIÓN FINAL ⚠️\n\n¿Estás absolutamente seguro de que deseas eliminar permanentemente el vehículo ${document.querySelector('.patente-value').textContent}?\n\nEsta acción NO se puede deshacer.`)) {
+            return;
+        }
+        
+        // Show loading state
+        showLoading();
+        
+        // Disable all buttons
+        deleteButton.disabled = true;
+        deleteButton.innerHTML = '<i data-lucide="loader-2" class="animate-spin"></i> Eliminando...';
+        if (cancelButton) cancelButton.style.pointerEvents = 'none';
+        
+        // Submit form after short delay for UX
+        setTimeout(() => {
+            deleteForm.submit();
+        }, 1500);
+    });
+
+    // Loading overlay functions
+    function showLoading() {
+        const loadingOverlay = document.createElement('div');
+        loadingOverlay.className = 'loading-overlay';
+        loadingOverlay.innerHTML = '<div class="loading-spinner"></div>';
+        document.body.appendChild(loadingOverlay);
+    }
+
+    function hideLoading() {
+        const overlay = document.querySelector('.loading-overlay');
+        if (overlay) overlay.remove();
+    }
+
+    // Message functions
+    function showSuccessMessage() {
+        const template = document.getElementById('successTemplate');
+        const message = template.content.cloneNode(true);
+        document.body.appendChild(message);
+        lucide.createIcons();
+    }
+
+    function showErrorMessage() {
+        const template = document.getElementById('errorTemplate');
+        const message = template.content.cloneNode(true);
+        document.body.appendChild(message);
+        lucide.createIcons();
+    }
+
+    function closeMessage() {
+        const overlay = document.querySelector('.message-overlay');
+        if (overlay) overlay.remove();
+    }
+
+    function retryDelete() {
+        closeMessage();
+        deleteForm.submit();
+    }
+
+    // Check for success/error parameters in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('success') && urlParams.get('success') === 'true') {
+        showSuccessMessage();
+    } else if (urlParams.has('error') && urlParams.get('error') === 'true') {
+        showErrorMessage();
+    }
+
+    // Prevent accidental navigation
+    let formInteracted = false;
+    
+    confirmCheckbox.addEventListener('change', () => {
+        formInteracted = true;
+    });
+    
+    window.addEventListener('beforeunload', (e) => {
+        if (formInteracted) {
+            e.preventDefault();
+            e.returnValue = 'Tienes una eliminación en proceso. ¿Estás seguro de que quieres salir?';
+        }
+    });
+    
+    // Reset form interaction on successful navigation
+    cancelButton?.addEventListener('click', (e) => {
+        if (formInteracted) {
+            if (!confirm('Tienes una eliminación en proceso. ¿Estás seguro de que quieres cancelar?')) {
+                e.preventDefault();
+            } else {
+                formInteracted = false;
+            }
+        }
+    });
+
+    // Add keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+        // Escape to cancel
+        if (e.key === 'Escape' && !deleteButton.disabled) {
+            cancelButton?.click();
+        }
+        
+        // Enter to submit (only when checkbox is checked)
+        if (e.key === 'Enter' && confirmCheckbox.checked && !e.ctrlKey && !e.shiftKey) {
+            e.preventDefault();
+            deleteButton.click();
+        }
+        
+        // Space to toggle checkbox
+        if (e.key === ' ' && document.activeElement === confirmCheckbox) {
+            e.preventDefault();
+            confirmCheckbox.checked = !confirmCheckbox.checked;
+            confirmCheckbox.dispatchEvent(new Event('change'));
+        }
+    });
+
+    // Focus management
+    confirmCheckbox.focus();
+
+    // Add visual feedback on hover
+    deleteButton.addEventListener('mouseenter', () => {
+        if (!deleteButton.disabled) {
+            deleteButton.style.transform = 'scale(1.02)';
+        }
+    });
+    
+    deleteButton.addEventListener('mouseleave', () => {
+        deleteButton.style.transform = '';
+    });
 </script>
 {% endblock %}

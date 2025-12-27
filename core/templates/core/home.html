@@ -1,29 +1,261 @@
 {% extends "base.html" %}
 
-{% block title %}Inicio | Sistema de Gestión{% endblock %}
+{% block title %}Inicio | Sistema de Gestión de Vehículos{% endblock %}
+
+{% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+    :root {
+        --primary: #4f46e5;
+        --primary-dark: #3730a3;
+        --primary-light: #e0e7ff;
+        --secondary: #10b981;
+        --bg: #f8fafc;
+        --card: #ffffff;
+        --text-main: #1e293b;
+        --text-muted: #64748b;
+        --border: #e2e8f0;
+        --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        --radius: 12px;
+        --radius-sm: 8px;
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    }
+
+    .home-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+    }
+
+    .hero-section {
+        padding: 6rem 0 4rem;
+        text-align: center;
+    }
+
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--primary-light);
+        color: var(--primary-dark);
+        padding: 0.6rem 1.2rem;
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+    }
+
+    .hero-title {
+        font-size: 3.5rem;
+        font-weight: 800;
+        color: var(--text-main);
+        margin-bottom: 1.5rem;
+        letter-spacing: -0.02em;
+    }
+
+    .hero-subtitle {
+        font-size: 1.25rem;
+        color: var(--text-muted);
+        max-width: 700px;
+        margin: 0 auto 2.5rem;
+        line-height: 1.6;
+    }
+
+    .hero-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 0.8rem 2rem;
+        border-radius: var(--radius-sm);
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        transition: all 0.2s;
+        text-decoration: none;
+    }
+
+    .btn-primary {
+        background: var(--primary);
+        color: white;
+        box-shadow: 0 4px 10px rgba(79, 70, 229, 0.2);
+    }
+
+    .btn-primary:hover {
+        background: var(--primary-dark);
+        transform: translateY(-2px);
+    }
+
+    .btn-outline {
+        background: white;
+        color: var(--text-main);
+        border: 1px solid var(--border);
+    }
+
+    .btn-outline:hover {
+        background: var(--bg);
+        transform: translateY(-2px);
+        border-color: var(--primary);
+    }
+
+    .features-section {
+        padding: 4rem 0;
+    }
+
+    .section-header {
+        text-align: center;
+        margin-bottom: 3.5rem;
+    }
+
+    .section-title {
+        font-size: 2.25rem;
+        font-weight: 700;
+        color: var(--text-main);
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+    }
+
+    .feature-card {
+        background: var(--card);
+        padding: 2.5rem;
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        transition: 0.3s;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow);
+        border-color: var(--primary-light);
+    }
+
+    .feature-icon {
+        color: var(--primary);
+        margin-bottom: 1.25rem;
+    }
+
+    .home-footer {
+        padding: 3rem 0;
+        border-top: 1px solid var(--border);
+        text-align: center;
+        margin-top: 4rem;
+    }
+
+    @media (max-width: 768px) {
+        .hero-title { font-size: 2.5rem; }
+        .hero-actions { flex-direction: column; align-items: center; }
+        .btn { width: 100%; max-width: 320px; justify-content: center; }
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<section>
-    <h1>Bienvenido al Sistema de Gestión de Vehículos</h1>
+<div class="home-container">
 
-    <p>
-        Esta plataforma permite administrar vehículos corporativos, 
-        asignarlos a usuarios y llevar un control centralizado de la flota.
-    </p>
+    <section class="hero-section">
+        <div class="hero-badge">
+            <i data-lucide="shield-check"></i>
+            Sistema de Gestión Corporativa
+        </div>
 
-    <ul>
-        <li>Gestión de vehículos</li>
-        <li>Control por usuario</li>
-        <li>Panel de métricas</li>
-        <li>Sistema de perfiles</li>
-        <li>Módulo de mensajería interna</li>
-    </ul>
+        <h1 class="hero-title">Control Total de tu Flota</h1>
 
-    {% if not user.is_authenticated %}
-        <p>
-            Para acceder a las funcionalidades completas, por favor
-            <a href="{% url 'accounts:login' %}">inicia sesión</a>.
+        <p class="hero-subtitle">
+            Administra vehículos, optimiza asignaciones y mantén un registro
+            centralizado de toda tu flota vehicular en una sola plataforma.
         </p>
-    {% endif %}
-</section>
+
+        {% if user.is_authenticated %}
+        <div class="hero-actions">
+            <a href="{% url 'vehiculos:dashboard' %}" class="btn btn-primary">
+                <i data-lucide="layout-dashboard"></i> Dashboard
+            </a>
+
+            <a href="{% url 'vehiculos:detalle_vehiculos' %}" class="btn btn-outline">
+                <i data-lucide="list"></i> Ver Flota
+            </a>
+
+            <a href="{% url 'vehiculos:registro' %}" class="btn btn-outline">
+                <i data-lucide="plus-circle"></i> Nuevo Vehículo
+            </a>
+
+            <a href="{% url 'accounts:signup' %}" class="btn btn-outline">
+                <i data-lucide="user-plus"></i> Crear Usuario
+            </a>
+        </div>
+        {% else %}
+        <div class="hero-actions">
+            <a href="{% url 'accounts:login' %}" class="btn btn-primary">
+                <i data-lucide="log-in"></i> Acceder al Sistema
+            </a>
+        </div>
+        {% endif %}
+    </section>
+
+    <section class="features-section">
+        <div class="section-header">
+            <h2 class="section-title">Funcionalidades Clave</h2>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i data-lucide="truck" size="32"></i>
+                </div>
+                <h3>Gestión de Activos</h3>
+                <p class="text-muted">
+                    Fichas técnicas detalladas y trazabilidad completa de cada unidad vehicular.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i data-lucide="users" size="32"></i>
+                </div>
+                <h3>Asignación Directa</h3>
+                <p class="text-muted">
+                    Control preciso de responsables por vehículo y tiempos de uso.
+                </p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i data-lucide="bar-chart" size="32"></i>
+                </div>
+                <h3>Reportes de Estado</h3>
+                <p class="text-muted">
+                    Visualización inmediata del estatus operativo de toda la flota.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="home-footer">
+        <p style="font-size: 0.9rem; color: var(--text-muted)">
+            Gestión de Flotas © {% now "Y" %} • Eficiencia en Movimiento
+        </p>
+    </footer>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    lucide.createIcons();
+</script>
 {% endblock %}

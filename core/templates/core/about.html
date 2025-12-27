@@ -1,96 +1,511 @@
-
 {% extends "base.html" %}
 
-{% block title %}Perfil Profesional - Billy Colina{% endblock %}
+{% block title %}Acerca del Proyecto | Sistema de Gestión{% endblock %}
+
+{% block extra_css %}
+<style>
+    .about-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 3rem 1.5rem;
+    }
+
+    .about-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .about-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
+        background: linear-gradient(135deg, #1e293b 0%, #475569 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .about-subtitle {
+        font-size: 1.125rem;
+        color: #64748b;
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+
+    .about-content {
+        background: #ffffff;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        padding: 2.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .author-section {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .author-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #4f46e5 0%, #8b5cf6 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 2rem;
+        font-weight: 600;
+        flex-shrink: 0;
+        border: 4px solid #f1f5f9;
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
+    }
+
+    .author-info {
+        flex: 1;
+    }
+
+    .author-name {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin: 0 0 0.25rem 0;
+    }
+
+    .author-role {
+        color: #4f46e5;
+        font-weight: 500;
+        font-size: 1rem;
+        margin: 0 0 0.5rem 0;
+    }
+
+    .author-description {
+        color: #64748b;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    .project-description {
+        font-size: 1.125rem;
+        color: #475569;
+        line-height: 1.8;
+        margin-bottom: 2rem;
+    }
+
+    .tech-section {
+        margin-bottom: 2rem;
+    }
+
+    .section-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .section-title i {
+        color: #4f46e5;
+        width: 20px;
+        height: 20px;
+    }
+
+    .tech-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .tech-card {
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 1.5rem;
+        border: 1px solid #e2e8f0;
+        transition: all 0.2s ease;
+    }
+
+    .tech-card:hover {
+        transform: translateY(-2px);
+        border-color: #c7d2fe;
+        background: #f1f5f9;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .tech-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #4f46e5 0%, #8b5cf6 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+    }
+
+    .tech-icon i {
+        width: 20px;
+        height: 20px;
+    }
+
+    .tech-name {
+        font-weight: 600;
+        color: #1e293b;
+        margin: 0 0 0.25rem 0;
+    }
+
+    .tech-description {
+        font-size: 0.875rem;
+        color: #64748b;
+        line-height: 1.4;
+        margin: 0;
+    }
+
+    .features-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .feature-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        margin-bottom: 1.25rem;
+        padding-left: 0;
+    }
+
+    .feature-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .feature-icon {
+        width: 24px;
+        height: 24px;
+        border-radius: 6px;
+        background: #e0e7ff;
+        color: #4f46e5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        margin-top: 0.125rem;
+    }
+
+    .feature-icon i {
+        width: 14px;
+        height: 14px;
+    }
+
+    .feature-text {
+        color: #475569;
+        line-height: 1.6;
+        margin: 0;
+        flex: 1;
+    }
+
+    .project-stats {
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid #f1f5f9;
+    }
+
+    .stat-item {
+        text-align: center;
+        padding: 0.75rem 1.25rem;
+    }
+
+    .stat-value {
+        display: block;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #4f46e5;
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+        font-size: 0.875rem;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .about-footer {
+        text-align: center;
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 1px solid #e2e8f0;
+    }
+
+    .footer-text {
+        color: #94a3b8;
+        font-size: 0.875rem;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .about-container {
+            padding: 1.5rem;
+        }
+        
+        .about-title {
+            font-size: 2rem;
+        }
+        
+        .about-content {
+            padding: 1.5rem;
+        }
+        
+        .author-section {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .tech-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .project-stats {
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .about-title {
+            font-size: 1.75rem;
+        }
+        
+        .about-subtitle {
+            font-size: 1rem;
+        }
+        
+        .project-description {
+            font-size: 1rem;
+        }
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-in {
+        animation: fadeInUp 0.6s ease;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-11 col-lg-9">
-            
-            <header class="text-center mb-5">
-                <h1 class="display-4 fw-bold text-dark">Billy Colina</h1>
-                <p class="lead text-primary fw-semibold">Ingeniero en Sistemas | Data Analytics & IT Infrastructure Specialist</p>
-                <div class="d-flex justify-content-center gap-3">
-                    <span class="badge bg-secondary">Chile (10 años)</span>
-                    <span class="badge bg-success">Data Science Candidate</span>
-                </div>
-                <hr class="my-5">
-            </header>
+<div class="about-container">
+    <!-- Header -->
+    <div class="about-header animate-in">
+        <h1 class="about-title">Acerca del Proyecto</h1>
+        <p class="about-subtitle">
+            Sistema de Gestión de Vehículos desarrollado como proyecto final del curso de Python con Django
+        </p>
+    </div>
 
-            <section class="mb-5">
-                <h3 class="border-start border-4 border-primary ps-3 mb-4">Resumen Ejecutivo</h3>
-                <p class="fs-5 text-muted" style="text-align: justify;">
-                    Ingeniero en Sistemas con una trayectoria integral que abarca desde la operatividad técnica en <strong>Diario Panorama</strong> 
-                    hasta la analítica de datos en banca corporativa (<strong>Banesco</strong>). Con una década de experiencia en el mercado chileno, 
-                    he liderado la transición de infraestructuras críticas hacia entornos de análisis avanzado, especializándome en los últimos 4 años 
-                    en la extracción de valor mediante <strong>Data Analytics</strong>.
+    <!-- Main Content -->
+    <div class="about-content animate-in">
+        <!-- Author Section -->
+        <div class="author-section">
+            <div class="author-avatar">
+                {{ "Billy Colina"|slice:":1" }}
+            </div>
+            <div class="author-info">
+                <h2 class="author-name">Billy Colina</h2>
+                <p class="author-role">Desarrollador Full Stack & Ingeniero en Sistemas</p>
+                <p class="author-description">
+                    Especializado en desarrollo web con Python/Django, Data Analytics 
+                    y arquitecturas de software escalables. Con experiencia en el mercado 
+                    chileno y apasionado por crear soluciones tecnológicas eficientes.
                 </p>
-            </section>
-
-            <section class="mb-5">
-                <h3 class="border-start border-4 border-primary ps-3 mb-4">Competencias Técnicas & Stack</h3>
-                <div class="row g-4">
-                    <div class="col-md-6">
-                        <div class="card h-100 shadow-sm border-0 bg-light">
-                            <div class="card-body">
-                                <h5 class="card-title text-primary"><i class="bi bi-code-slash"></i> Data & Development</h5>
-                                <ul class="list-unstyled">
-                                    <li class="mb-2"><strong>Python:</strong> Desarrollo de scripts y procesamiento de datos.</li>
-                                    <li class="mb-2"><strong>SQL:</strong> Consultas complejas y gestión de bases de datos relacionales.</li>
-                                    <li class="mb-2"><strong>BI Tools:</strong> Power BI & Qlik Sense (Dashboarding avanzado).</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="card h-100 shadow-sm border-0 bg-light">
-                            <div class="card-body">
-                                <h5 class="card-title text-primary"><i class="bi bi-cloud-server"></i> Cloud & Infrastructure</h5>
-                                <ul class="list-unstyled">
-                                    <li class="mb-2"><strong>Identity:</strong> Active Directory (On-premise / Azure AD).</li>
-                                    <li class="mb-2"><strong>Containerization:</strong> Docker & Kubernetes (K8s).</li>
-                                    <li class="mb-2"><strong>Frameworks:</strong> Metodologías Ágiles (Scrum/Kanban).</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section>
-                <h3 class="border-start border-4 border-primary ps-3 mb-4">Evolución Estratégica</h3>
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>Etapa</th>
-                                <th>Enfoque</th>
-                                <th>Hito Clave</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>Actual</strong></td>
-                                <td>Data Analytics / Science</td>
-                                <td>Transformación de datos en insights de negocio.</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Consolidación (Chile)</strong></td>
-                                <td>Infraestructura & MDA</td>
-                                <td>Supervisión de servicios IT y proyectos cloud.</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Inicios</strong></td>
-                                <td>Sistemas & Electromecánica</td>
-                                <td>Diario Panorama y Banesco Banca Universal.</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-            
+            </div>
         </div>
+
+        <!-- Project Description -->
+        <div class="project-description">
+            <p>
+                Este sistema de gestión vehicular fue desarrollado como proyecto final del curso de 
+                Python con Django, demostrando habilidades en construcción de aplicaciones web 
+                profesionales, implementación de autenticación segura, gestión de permisos y 
+                creación de interfaces de usuario intuitivas.
+            </p>
+            <p>
+                El objetivo principal es proporcionar una solución completa para la administración 
+                de flotas vehiculares, con funcionalidades que incluyen registro de vehículos, 
+                asignación de responsables, control de estado y generación de métricas en tiempo real.
+            </p>
+        </div>
+
+        <!-- Technologies Section -->
+        <div class="tech-section">
+            <h3 class="section-title">
+                <i data-lucide="cpu"></i>
+                Tecnologías Implementadas
+            </h3>
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <i data-lucide="code"></i>
+                    </div>
+                    <h4 class="tech-name">Django Framework</h4>
+                    <p class="tech-description">
+                        Backend robusto con ORM, autenticación y sistema de templates
+                    </p>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <i data-lucide="database"></i>
+                    </div>
+                    <h4 class="tech-name">Base de Datos</h4>
+                    <p class="tech-description">
+                        PostgreSQL/MySQL con relaciones complejas y migraciones
+                    </p>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <i data-lucide="shield"></i>
+                    </div>
+                    <h4 class="tech-name">Seguridad</h4>
+                    <p class="tech-description">
+                        Autenticación, CSRF protection, permisos y roles de usuario
+                    </p>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-icon">
+                        <i data-lucide="layout"></i>
+                    </div>
+                    <h4 class="tech-name">Frontend Moderno</h4>
+                    <p class="tech-description">
+                        HTML5, CSS3, JavaScript y Chart.js para visualizaciones
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="tech-section">
+            <h3 class="section-title">
+                <i data-lucide="zap"></i>
+                Características Principales
+            </h3>
+            <ul class="features-list">
+                <li class="feature-item">
+                    <div class="feature-icon">
+                        <i data-lucide="user-check"></i>
+                    </div>
+                    <p class="feature-text">
+                        <strong>Sistema de autenticación completo</strong> con roles de usuario (admin/regular) 
+                        y gestión de permisos granular
+                    </p>
+                </li>
+                <li class="feature-item">
+                    <div class="feature-icon">
+                        <i data-lucide="car"></i>
+                    </div>
+                    <p class="feature-text">
+                        <strong>CRUD completo de vehículos</strong> con atributos detallados, estados 
+                        y asignación a usuarios responsables
+                    </p>
+                </li>
+                <li class="feature-item">
+                    <div class="feature-icon">
+                        <i data-lucide="bar-chart-3"></i>
+                    </div>
+                    <p class="feature-text">
+                        <strong>Dashboard interactivo</strong> con gráficos en tiempo real, métricas 
+                        y filtros avanzados para análisis de datos
+                    </p>
+                </li>
+                <li class="feature-item">
+                    <div class="feature-icon">
+                        <i data-lucide="shield"></i>
+                    </div>
+                    <p class="feature-text">
+                        <strong>Arquitectura escalable</strong> diseñada para futuras ampliaciones 
+                        como APIs REST, reporting avanzado e integraciones externas
+                    </p>
+                </li>
+            </ul>
+        </div>
+
+    <!-- Footer -->
+    <div class="about-footer animate-in" style="animation-delay: 0.2s">        
+        <p class="footer-text" style="margin-top: 0.5rem;">
+            &copy; {% now "Y" %} · Sistema de Gestión de Vehículos
+        </p>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Initialize icons
+    lucide.createIcons();
+
+    // Add animation on scroll
+    function animateOnScroll() {
+        const elements = document.querySelectorAll('.animate-in');
+        
+        elements.forEach(element => {
+            const elementTop = element.getBoundingClientRect().top;
+            const windowHeight = window.innerHeight;
+            
+            if (elementTop < windowHeight - 100) {
+                element.style.opacity = '1';
+                element.style.transform = 'translateY(0)';
+            }
+        });
+    }
+
+    // Set initial state for animation
+    document.querySelectorAll('.animate-in').forEach(element => {
+        element.style.opacity = '0';
+        element.style.transform = 'translateY(20px)';
+        element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    });
+
+    // Run animation on load and scroll
+    window.addEventListener('load', animateOnScroll);
+    window.addEventListener('scroll', animateOnScroll);
+
+    // Add hover effects to tech cards
+    document.querySelectorAll('.tech-card').forEach(card => {
+        card.addEventListener('mouseenter', () => {
+            const icon = card.querySelector('.tech-icon');
+            if (icon) {
+                icon.style.transform = 'scale(1.1) rotate(5deg)';
+                icon.style.transition = 'transform 0.3s ease';
+            }
+        });
+        
+        card.addEventListener('mouseleave', () => {
+            const icon = card.querySelector('.tech-icon');
+            if (icon) {
+                icon.style.transform = 'scale(1) rotate(0)';
+            }
+        });
+    });
+</script>
 {% endblock %}

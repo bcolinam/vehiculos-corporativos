@@ -1,139 +1,310 @@
 {% extends "base.html" %}
 
-{% block title %}SGV | Listado de Vehículos{% endblock %}
+{% block title %}SGV | Gestión de Vehículos{% endblock %}
 
 {% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+
 <style>
+    :root {
+        --primary: #4f46e5;
+        --primary-dark: #3730a3;
+        --primary-light: #e0e7ff;
+        --secondary: #10b981;
+        --secondary-dark: #059669;
+        --danger: #ef4444;
+        --danger-dark: #dc2626;
+        --warning: #f59e0b;
+        --bg: #f8fafc;
+        --card: #ffffff;
+        --text-main: #1e293b;
+        --text-muted: #64748b;
+        --text-light: #94a3b8;
+        --border: #e2e8f0;
+        --border-light: #f1f5f9;
+        --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.05);
+        --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        --radius: 12px;
+        --radius-sm: 8px;
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--bg);
+    }
+
+    .page-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2.5rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--border);
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .page-title {
+        font-size: 1.875rem;
+        font-weight: 700;
+        color: var(--text-main);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin: 0;
+    }
+
+    .page-actions {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        padding: 0.75rem 1.75rem;
+        border-radius: var(--radius-sm);
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: 1px solid transparent;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .btn-outline-secondary {
+        background: var(--card);
+        color: var(--text-muted);
+        border-color: var(--border);
+    }
+
+    .btn-outline-secondary:hover {
+        background: var(--bg);
+        color: var(--text-main);
+        transform: translateY(-1px);
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        color: white;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-1px);
+        background: linear-gradient(135deg, var(--primary-dark), #312e81);
+    }
+
+    .btn i {
+        width: 18px;
+        height: 18px;
+    }
+
     .table-container {
-        background: #ffffff;
-        border-radius: 12px;
-        padding: 1.5rem;
-        border: 1px solid #e2e8f0;
-        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        background: var(--card);
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+    }
+
+    .table {
+        width: 100%;
+        margin: 0;
     }
 
     .table thead th {
-        background-color: #f8fafc;
-        color: #64748b;
-        text-transform: uppercase;
+        background: var(--bg);
+        color: var(--text-muted);
         font-size: 0.75rem;
-        letter-spacing: 0.05em;
-        border-top: none;
+        font-weight: 600;
+        text-transform: uppercase;
+        padding: 1rem;
+        border-bottom: 1px solid var(--border);
     }
 
-    .badge-status {
-        padding: 0.35rem 0.65rem;
-        border-radius: 50px;
-        font-size: 0.7rem;
+    .table tbody td {
+        padding: 1rem;
+        border-bottom: 1px solid var(--border-light);
+        vertical-align: middle;
+    }
+
+    .patente-cell {
+        font-family: monospace;
+        font-weight: 700;
+        color: var(--primary-dark);
+    }
+
+    .user-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: var(--primary-light);
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
         font-weight: 600;
     }
 
-    .status-activo { background: #dcfce7; color: #15803d; }
-    .status-inactivo { background: #fee2e2; color: #b91c1c; }
+    .user-cell {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+    }
+
+    .status-badge {
+        padding: 0.4rem 1rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .status-active {
+        background: #d1fae5;
+        color: #047857;
+    }
+
+    .status-inactive {
+        background: #fee2e2;
+        color: #b91c1c;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: flex-end;
+    }
 
     .btn-action {
-        padding: 0.4rem 0.8rem;
-        font-size: 0.85rem;
-        border-radius: 6px;
-        transition: all 0.2s;
+        width: 34px;
+        height: 34px;
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--border);
+        background: var(--card);
+        cursor: pointer;
     }
+
+    .btn-action-edit { color: var(--warning); }
+    .btn-action-delete { color: var(--danger); }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid py-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h2 class="fw-bold mb-1">Listado de Vehículos</h2>
-            <p class="text-muted small">
-                {% if user.is_staff %}
-                    Vista administrativa de toda la flota.
-                {% else %}
-                    Vehículos asignados a tu cuenta.
-                {% endif %}
-            </p>
-        </div>
-        
-        <div class="d-flex gap-2">
+<div class="page-container">
+
+    <!-- Header -->
+    <div class="page-header">
+        <h1 class="page-title">
+            <i data-lucide="truck"></i>
+            Gestión de Vehículos
+        </h1>
+
+        <div class="page-actions">
             <a href="{% url 'vehiculos:dashboard' %}" class="btn btn-outline-secondary">
-                <i data-lucide="layout-dashboard" class="me-1" style="width: 18px"></i> Dashboard
+                <i data-lucide="layout-dashboard"></i>
+                Dashboard
             </a>
+
             {% if user.is_staff %}
+            <a href="#" class="btn btn-outline-secondary">
+                <i data-lucide="download"></i>
+                Exportar
+            </a>
+
             <a href="{% url 'vehiculos:registro' %}" class="btn btn-primary">
-                <i data-lucide="plus" class="me-1" style="width: 18px"></i> Nuevo Registro
+                <i data-lucide="plus-circle"></i>
+                Registrar Vehículo
+            </a>
+
+            <a href="{% url 'accounts:signup' %}" class="btn btn-primary">
+                <i data-lucide="user-plus"></i>
+                Agregar Usuario
             </a>
             {% endif %}
         </div>
     </div>
 
+    <!-- Tabla -->
     <div class="table-container">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle">
-                <thead>
-                    <tr>
-                        <th>Patente</th>
-                        <th>Marca y Modelo</th>
-                        <th>Responsable</th>
-                        <th>Estado</th>
-                        {% if user.is_staff %}
-                        <th class="text-end">Acciones</th>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Patente</th>
+                    <th>Vehículo</th>
+                    <th>Responsable</th>
+                    <th>Estado</th>
+                    {% if user.is_staff %}
+                    <th class="text-end">Acciones</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for v in vehiculos %}
+                <tr>
+                    <td class="patente-cell">{{ v.patente|upper }}</td>
+                    <td>{{ v.marca }} {{ v.modelo }}</td>
+                    <td>
+                        <div class="user-cell">
+                            <div class="user-avatar">
+                                {{ v.usuario.username|slice:":1"|upper }}
+                            </div>
+                            {{ v.usuario.get_full_name|default:v.usuario.username }}
+                        </div>
+                    </td>
+                    <td>
+                        {% if v.activo %}
+                        <span class="status-badge status-active">
+                            <i data-lucide="check-circle"></i> Activo
+                        </span>
+                        {% else %}
+                        <span class="status-badge status-inactive">
+                            <i data-lucide="x-circle"></i> Inactivo
+                        </span>
                         {% endif %}
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for v in vehiculos %}
-                    <tr>
-                        <td class="fw-bold text-primary">{{ v.patente }}</td>
-                        <td>
-                            <div class="d-flex flex-column">
-                                <span>{{ v.marca }}</span>
-                                <small class="text-muted">{{ v.modelo }}</small>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <i data-lucide="user" class="me-2 text-muted" style="width: 14px"></i>
-                                {{ v.usuario.get_full_name|default:v.usuario.username }}
-                            </div>
-                        </td>
-                        <td>
-                            {% if v.activo %}
-                                <span class="badge-status status-activo">Activo</span>
-                            {% else %}
-                                <span class="badge-status status-inactivo">Inactivo</span>
-                            {% endif %}
-                        </td>
-                        {% if user.is_staff %}
-                        <td class="text-end">
-                            <div class="btn-group">
-                                <a href="{% url 'vehiculos:editar' v.id %}" class="btn btn-sm btn-outline-warning btn-action">
-                                    <i data-lucide="edit-2" style="width: 14px"></i>
-                                </a>
-                                <a href="{% url 'vehiculos:eliminar' v.id %}" class="btn btn-sm btn-outline-danger btn-action">
-                                    <i data-lucide="trash-2" style="width: 14px"></i>
-                                </a>
-                            </div>
-                        </td>
-                        {% endif %}
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="5" class="text-center py-5 text-muted">
-                            <i data-lucide="inbox" class="mb-2" style="width: 48px; height: 48px; opacity: 0.3"></i>
-                            <p>No se encontraron vehículos en el sistema.</p>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+                    </td>
+                    {% if user.is_staff %}
+                    <td class="text-end">
+                        <div class="action-buttons">
+                            <a href="{% url 'vehiculos:editar' v.id %}" class="btn-action btn-action-edit">
+                                <i data-lucide="edit-2"></i>
+                            </a>
+                            <a href="{% url 'vehiculos:eliminar' v.id %}" class="btn-action btn-action-delete">
+                                <i data-lucide="trash-2"></i>
+                            </a>
+                        </div>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center py-5 text-muted">
+                        No hay vehículos registrados
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
+
 </div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-    // Inicializar iconos de Lucide
     lucide.createIcons();
 </script>
 {% endblock %}

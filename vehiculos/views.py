@@ -5,16 +5,19 @@ from django.contrib import messages
 from django.db.models import Count, Q
 from django.core.exceptions import PermissionDenied
 
+# NUEVO (import mínimo y seguro)
+from openpyxl import Workbook
+
 from .models import Vehiculo
 from .forms import VehiculoForm
+
 
 # --- Helpers de Seguridad ---
 
 def admin_required(user):
-    """Verifica si el usuario es staff. Si no lo es, lanza PermissionDenied o redirige."""
-    if not user.is_staff:
-        return False
-    return True
+    """Verifica si el usuario es staff."""
+    return user.is_staff
+
 
 # --- Vistas del Sistema ---
 
@@ -27,20 +30,17 @@ def dashboard(request: HttpRequest) -> HttpResponse:
     """
     user = request.user
     
-    # Optimizamos con select_related para evitar el problema de N+1 queries al acceder a 'usuario'
     if user.is_staff:
         vehiculos_qs = Vehiculo.objects.select_related("usuario").all()
     else:
-        # El usuario normal solo ve lo suyo
         vehiculos_qs = Vehiculo.objects.filter(usuario=user)
 
-    # Estadísticas para el Administrador
     stats_usuarios = []
     if user.is_staff:
         stats_usuarios = list(
             Vehiculo.objects.values("usuario__username")
             .annotate(total=Count("id"))
-            .order_by("-total")[:5] # Top 5 usuarios con más vehículos
+            .order_by("-total")[:5]
         )
 
     context = {
@@ -51,16 +51,15 @@ def dashboard(request: HttpRequest) -> HttpResponse:
             "stats_usuarios": stats_usuarios,
         },
         "es_admin": user.is_staff,
-        # Mostramos los últimos 5 registros según el nivel de acceso
         "ultimos_vehiculos": vehiculos_qs.order_by("-fecha_creacion")[:5]
     }
 
     return render(request, "vehiculos/dashboard.html", context)
 
+
 @login_required
 @user_passes_test(admin_required, login_url='vehiculos:dashboard')
 def registrar_vehiculo(request: HttpRequest) -> HttpResponse:
-    """Solo el staff puede registrar nuevos vehículos."""
     if request.method == "POST":
         form = VehiculoForm(request.POST)
         if form.is_valid():
@@ -72,12 +71,9 @@ def registrar_vehiculo(request: HttpRequest) -> HttpResponse:
 
     return render(request, "vehiculos/registro.html", {"form": form})
 
+
 @login_required
 def detalle_vehiculos(request: HttpRequest) -> HttpResponse:
-    """
-    Lista completa de vehículos.
-    Filtra automáticamente si el usuario no es administrador.
-    """
     if request.user.is_staff:
         vehiculos = Vehiculo.objects.select_related("usuario").all().order_by("-fecha_creacion")
     else:
@@ -88,10 +84,10 @@ def detalle_vehiculos(request: HttpRequest) -> HttpResponse:
         "es_admin": request.user.is_staff,
     })
 
+
 @login_required
 @user_passes_test(admin_required, login_url='vehiculos:dashboard')
 def editar_vehiculo(request: HttpRequest, pk: int) -> HttpResponse:
-    """Edición restringida a Staff."""
     vehiculo = get_object_or_404(Vehiculo, pk=pk)
 
     if request.method == "POST":
@@ -99,7 +95,7 @@ def editar_vehiculo(request: HttpRequest, pk: int) -> HttpResponse:
         if form.is_valid():
             form.save()
             messages.success(request, f"Vehículo {vehiculo.patente} actualizado.")
-            return redirect("vehiculos:detalle_vehiculos") # Nombre de URL corregido
+            return redirect("vehiculos:detalle_vehiculos")
     else:
         form = VehiculoForm(instance=vehiculo)
 
@@ -108,10 +104,10 @@ def editar_vehiculo(request: HttpRequest, pk: int) -> HttpResponse:
         "vehiculo": vehiculo,
     })
 
+
 @login_required
 @user_passes_test(admin_required, login_url='vehiculos:dashboard')
 def eliminar_vehiculo(request: HttpRequest, pk: int) -> HttpResponse:
-    """Eliminación física del registro. Solo Staff."""
     vehiculo = get_object_or_404(Vehiculo, pk=pk)
 
     if request.method == "POST":
@@ -121,3 +117,68 @@ def eliminar_vehiculo(request: HttpRequest, pk: int) -> HttpResponse:
         return redirect("vehiculos:detalle_vehiculos")
 
     return render(request, "vehiculos/eliminar.html", {"vehiculo": vehiculo})
+
+
+# -------------------------------------------------------------------
+# NUEVA VISTA — EXPORTACIÓN A EXCEL (NO rompe nada existente)
+# -------------------------------------------------------------------
+
+@login_required
+@user_passes_test(admin_required, login_url='vehiculos:dashboard')
+def exportar_vehiculos_excel(request: HttpRequest) -> HttpResponse:
+    """
+    Exporta SOLO los vehículos filtrados actualmente.
+    Respeta filtros por GET y permisos.
+    """
+
+    # Base queryset
+    qs = Vehiculo.objects.select_related("usuario")
+
+    # 🔐 Seguridad por diseño (aunque solo staff accede)
+    if not request.user.is_staff:
+        qs = qs.filter(usuario=request.user)
+
+    # 🔎 Filtros dinámicos desde la URL (?activo=1, ?usuario=juan, etc.)
+    activo = request.GET.get("activo")
+    usuario = request.GET.get("usuario")
+
+    if activo is not None:
+        qs = qs.filter(activo=activo.lower() in ["1", "true", "yes"])
+
+    if usuario:
+        qs = qs.filter(usuario__username__icontains=usuario)
+
+    # 📊 Excel
+    from openpyxl import Workbook
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Vehículos"
+
+    # Encabezados
+    ws.append([
+        "Patente",
+        "Marca",
+        "Modelo",
+        "Responsable",
+        "Estado"
+    ])
+
+    # Datos filtrados
+    for v in qs:
+        ws.append([
+            v.patente,
+            v.marca,
+            v.modelo,
+            v.usuario.get_full_name() or v.usuario.username,
+            "Activo" if v.activo else "Inactivo"
+        ])
+
+    # Respuesta
+    response = HttpResponse(
+        content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
+    response["Content-Disposition"] = 'attachment; filename="vehiculos_filtrados.xlsx"'
+
+    wb.save(response)
+    return response
+

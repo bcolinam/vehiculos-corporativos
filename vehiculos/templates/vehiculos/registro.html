@@ -1,134 +1,246 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Registrar Vehículo</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% extends "base.html" %}
 
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, Helvetica, sans-serif;
-            background-color: #f4f6f9;
-            color: #333;
-        }
+{% block title %}SGV | Registrar Vehículo{% endblock %}
 
-        header {
-            background-color: #2c3e50;
-            padding: 1rem 2rem;
-            color: #fff;
-        }
+{% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
-        header h1 {
-            margin: 0;
-            font-size: 1.4rem;
-        }
+<style>
+    :root {
+        --primary: #4f46e5;
+        --primary-dark: #3730a3;
+        --primary-light: #e0e7ff;
+        --bg: #f8fafc;
+        --card: #ffffff;
+        --text-main: #1e293b;
+        --text-muted: #64748b;
+        --border: #e2e8f0;
+        --radius: 12px;
+        --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    }
 
-        main {
-            padding: 2rem;
-            display: flex;
-            justify-content: center;
-        }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); }
 
-        .form-container {
-            background-color: #fff;
-            width: 100%;
-            max-width: 500px;
-            padding: 2rem;
-            border-radius: 6px;
-            box-shadow: 0 1px 6px rgba(0, 0, 0, 0.15);
-        }
+    .page-container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
 
-        .form-container h2 {
-            margin-top: 0;
-            font-size: 1.2rem;
-            margin-bottom: 1.5rem;
-            text-align: center;
-        }
+    /* Header */
+    .header-section { margin-bottom: 2rem; }
+    .badge-new { background: #dcfce7; color: #166534; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.75rem; font-weight: 700; margin-bottom: 0.5rem; display: inline-block; }
 
-        form p {
-            margin-bottom: 1rem;
-        }
+    /* Grid Layout */
+    .registration-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 2rem; }
 
-        label {
-            font-weight: bold;
-            display: block;
-            margin-bottom: 0.3rem;
-        }
+    /* Card Style */
+    .form-card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow); overflow: hidden; }
+    .form-body { padding: 2rem; }
 
-        input, select {
-            width: 100%;
-            padding: 0.45rem;
-            font-size: 0.9rem;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
+    /* Form Elements */
+    .form-group { margin-bottom: 1.25rem; }
+    .form-label { display: block; font-weight: 600; font-size: 0.875rem; margin-bottom: 0.5rem; color: var(--text-main); }
+    
+    .input-icon-wrapper { position: relative; display: flex; align-items: center; }
+    .input-icon-wrapper i { position: absolute; left: 1rem; color: var(--text-muted); width: 18px; pointer-events: none; }
+    
+    /* Input Estándar (Usando clases de tu forms.py) */
+    .form-control, .form-select {
+        width: 100%;
+        padding: 0.6rem 1rem 0.6rem 2.8rem;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        transition: all 0.2s;
+        font-size: 0.95rem;
+    }
 
-        .errorlist {
-            color: #c0392b;
-            margin: 0.3rem 0 0;
-            font-size: 0.8rem;
-            list-style: none;
-            padding-left: 0;
-        }
+    .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); outline: none; }
 
-        .actions {
-            margin-top: 1.8rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    /* Plate Preview */
+    .plate-display {
+        background: #f1f5f9;
+        border: 2px solid #334155;
+        border-radius: 6px;
+        padding: 0.5rem 1rem;
+        font-family: 'Monaco', monospace;
+        font-weight: 700;
+        font-size: 1.2rem;
+        text-align: center;
+        letter-spacing: 2px;
+        display: inline-block;
+        margin-top: 0.5rem;
+    }
 
-        .actions button {
-            background-color: #2c3e50;
-            color: #fff;
-            border: none;
-            padding: 0.6rem 1.2rem;
-            font-size: 0.9rem;
-            border-radius: 4px;
-            cursor: pointer;
-        }
+    /* Checklist Ayuda */
+    .help-card { background: #fff; padding: 1.5rem; border-radius: var(--radius); border: 1px solid var(--border); }
+    .help-item { display: flex; gap: 0.75rem; margin-bottom: 1rem; font-size: 0.875rem; }
+    .help-icon { color: var(--primary); flex-shrink: 0; }
 
-        .actions button:hover {
-            background-color: #1a252f;
-        }
+    /* Errors */
+    .errorlist { color: #ef4444; font-size: 0.8rem; margin-top: 0.25rem; list-style: none; padding: 0; }
+    .is-invalid { border-color: #ef4444 !important; }
 
-        .actions a {
-            text-decoration: none;
-            font-size: 0.85rem;
-            color: #2c3e50;
-        }
+    @media (max-width: 900px) { .registration-grid { grid-template-columns: 1fr; } }
+</style>
+{% endblock %}
 
-        .actions a:hover {
-            text-decoration: underline;
-        }
-    </style>
-</head>
-
-<body>
-
-<header>
-    <h1>Registro de Vehículo</h1>
-</header>
-
-<main>
-    <div class="form-container">
-
-        <h2>Datos del vehículo</h2>
-
-        <form method="post" novalidate>
-            {% csrf_token %}
-
-            {{ form.as_p }}
-
-            <div class="actions">
-                <a href="{% url 'vehiculos:dashboard' %}">← Volver</a>
-                <button type="submit">Guardar vehículo</button>
-            </div>
-        </form>
-
+{% block content %}
+<div class="page-container">
+    <div class="header-section">
+        <span class="badge-new">OPERACIONES</span>
+        <h1 style="font-size: 1.8rem; font-weight: 800; margin: 0;">Registro de Activos</h1>
+        <p style="color: var(--text-muted);">Ingrese los datos técnicos del vehículo y asigne un responsable.</p>
     </div>
-</main>
 
-</body>
-</html>
+    <div class="registration-grid">
+        <div class="form-card">
+            <div class="form-body">
+                <form method="post" id="vehicleForm">
+                    {% csrf_token %}
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                        <div class="form-group">
+                            <label class="form-label">Patente (Chile)</label>
+                            <div class="input-icon-wrapper">
+                                <i data-lucide="hash"></i>
+                                {{ form.patente }}
+                            </div>
+                            <div id="platePreview" style="display: none;">
+                                <div class="plate-display" id="plateText"></div>
+                            </div>
+                            {{ form.patente.errors }}
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Año</label>
+                            <div class="input-icon-wrapper">
+                                <i data-lucide="calendar"></i>
+                                {{ form.anio }}
+                            </div>
+                            {{ form.anio.errors }}
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                        <div class="form-group">
+                            <label class="form-label">Marca</label>
+                            <div class="input-icon-wrapper">
+                                <i data-lucide="award"></i>
+                                {{ form.marca }}
+                            </div>
+                            {{ form.marca.errors }}
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Modelo</label>
+                            <div class="input-icon-wrapper">
+                                <i data-lucide="truck"></i>
+                                {{ form.modelo }}
+                            </div>
+                            {{ form.modelo.errors }}
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                        <div class="form-group">
+                            <label class="form-label">Color</label>
+                            <div class="input-icon-wrapper">
+                                <i data-lucide="palette"></i>
+                                {{ form.color }}
+                            </div>
+                            {{ form.color.errors }}
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Responsable Asignado</label>
+                            <div class="input-icon-wrapper">
+                                <i data-lucide="user" style="z-index: 5;"></i>
+                                {{ form.usuario }}
+                            </div>
+                            {{ form.usuario.errors }}
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="background: #f8fafc; padding: 1rem; border-radius: 8px; border: 1px dashed var(--border);">
+                        <div class="form-check d-flex align-items-center gap-3">
+                            {{ form.activo }}
+                            <label class="form-check-label" for="{{ form.activo.id_for_label }}" style="margin-left: 10px;">
+                                <strong>Vehículo Activo</strong>
+                                <span style="display: block; font-size: 0.8rem; color: var(--text-muted);">Disponible para operaciones inmediatas.</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 2rem; display: flex; gap: 1rem;">
+                        <button type="submit" class="btn btn-primary" style="flex: 2; padding: 0.8rem;">
+                            <i data-lucide="check-circle"></i> Guardar Vehículo
+                        </button>
+                        <a href="{% url 'vehiculos:detalle_vehiculos' %}" class="btn btn-outline" style="flex: 1; padding: 0.8rem;">
+                            Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="info-column">
+            <div class="help-card">
+                <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <i data-lucide="info" class="text-primary"></i> Guía de Registro
+                </h3>
+                
+                <div class="help-item">
+                    <i data-lucide="check" class="help-icon"></i>
+                    <span>La <strong>patente</strong> se limpia automáticamente de guiones y espacios.</span>
+                </div>
+                <div class="help-item">
+                    <i data-lucide="check" class="help-icon"></i>
+                    <span>Rango de año permitido: <strong>1980 - {% now "Y"|add:1 %}</strong>.</span>
+                </div>
+                <div class="help-item">
+                    <i data-lucide="check" class="help-icon"></i>
+                    <span>Si no asignas un usuario, el vehículo quedará en <strong>Reserva</strong>.</span>
+                </div>
+            </div>
+
+            <div style="margin-top: 1.5rem; background: var(--primary); color: white; padding: 1.5rem; border-radius: var(--radius);">
+                <i data-lucide="shield-check" style="margin-bottom: 1rem;"></i>
+                <h4 style="margin: 0; font-size: 1rem;">Validación Corporativa</h4>
+                <p style="font-size: 0.85rem; opacity: 0.9; margin-top: 0.5rem;">Todos los registros son auditados. Asegúrese de que la información coincida con el padrón del vehículo.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    lucide.createIcons();
+
+    $(document).ready(function() {
+        // Inicializar Select2 para el usuario
+        $('select[name="usuario"]').select2({
+            width: '100%',
+            placeholder: "Buscar responsable..."
+        });
+
+        // Formateador dinámico de patente
+        const patenteInput = document.querySelector('input[name="patente"]');
+        const platePreview = document.getElementById('platePreview');
+        const plateText = document.getElementById('plateText');
+
+        patenteInput.addEventListener('input', function(e) {
+            let val = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+            val = val.substring(0, 6);
+            e.target.value = val;
+
+            if (val.length >= 2) {
+                platePreview.style.display = 'block';
+                plateText.textContent = val;
+            } else {
+                platePreview.style.display = 'none';
+            }
+        });
+    });
+</script>
+{% endblock %}

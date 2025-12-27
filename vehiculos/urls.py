@@ -39,4 +39,7 @@ urlpatterns = [
         views.eliminar_vehiculo, 
         name="eliminar"
     ),
+    # vehiculos/urls.py
+    path("exportar/", views.exportar_vehiculos_excel, name="exportar_excel"),
+
 ]

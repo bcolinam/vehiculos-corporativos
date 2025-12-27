@@ -1,33 +1,257 @@
 {% extends "base.html" %}
 
-{% block title %}Acerca de | Sistema de Gestión{% endblock %}
+{% block title %}Perfil Profesional | Billy Colina - Ingeniero en Sistemas & Data Analytics{% endblock %}
+
+{% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+
+<style>
+    :root {
+        --primary: #4f46e5;
+        --primary-dark: #3730a3;
+        --primary-light: #e0e7ff;
+        --secondary: #10b981;
+        --secondary-dark: #059669;
+        --danger: #ef4444;
+        --danger-dark: #dc2626;
+        --warning: #f59e0b;
+        --info: #3b82f6;
+        --bg: #f8fafc;
+        --card: #ffffff;
+        --text-main: #1e293b;
+        --text-muted: #64748b;
+        --text-light: #94a3b8;
+        --border: #e2e8f0;
+        --border-light: #f1f5f9;
+        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        --radius: 12px;
+        --radius-sm: 8px;
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        min-height: 100vh;
+    }
+
+    .profile-container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem;
+    }
+
+    .profile-hero {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        border-radius: var(--radius);
+        padding: 3rem;
+        color: white;
+        margin-bottom: 3rem;
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+    }
+
+    .profile-hero::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        opacity: 0.3;
+    }
+
+    .profile-header { position: relative; z-index: 1; }
+
+    .profile-avatar {
+        width: 120px; height: 120px; border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        margin: 0 auto 1.5rem;
+        display: flex; align-items: center; justify-content: center;
+        backdrop-filter: blur(10px);
+    }
+
+    .profile-avatar i { width: 48px; height: 48px; color: white; }
+
+    .profile-name { font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .profile-title { font-size: 1.25rem; opacity: 0.9; margin-bottom: 1.5rem; }
+
+    .profile-badges { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; margin-bottom: 2rem; }
+    .profile-badge {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 50px; padding: 0.5rem 1.25rem;
+        font-size: 0.875rem; font-weight: 500;
+        display: inline-flex; align-items: center; gap: 0.5rem;
+    }
+
+    .profile-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn {
+        padding: 0.75rem 1.75rem; border-radius: var(--radius-sm);
+        font-weight: 500; display: inline-flex; align-items: center; gap: 0.75rem;
+        transition: all 0.2s ease; text-decoration: none;
+    }
+    .btn-primary { background: white; color: var(--primary); }
+    .btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+
+    .content-section { margin-bottom: 3rem; }
+    .section-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; border-bottom: 2px solid var(--border-light); padding-bottom: 0.75rem; }
+    .section-icon { width: 48px; height: 48px; border-radius: var(--radius); background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; }
+    .section-title { font-size: 1.75rem; font-weight: 700; color: var(--text-main); margin: 0; }
+
+    .summary-card { background: var(--card); border-radius: var(--radius); padding: 2rem; border: 1px solid var(--border); box-shadow: var(--shadow); line-height: 1.8; color: var(--text-muted); }
+    .summary-highlight { color: var(--primary-dark); font-weight: 600; background: var(--primary-light); padding: 0.125rem 0.4rem; border-radius: 4px; }
+
+    .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+    .skill-card { background: var(--card); border-radius: var(--radius); padding: 1.75rem; border: 1px solid var(--border); transition: all 0.3s ease; }
+    .skill-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+    .skill-card-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem; }
+    .skill-card-icon { width: 48px; height: 48px; border-radius: var(--radius-sm); background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; }
+    .skill-list { list-style: none; padding: 0; }
+    .skill-item { display: flex; align-items: flex-start; gap: 0.75rem; margin-bottom: 0.875rem; }
+    .skill-name { font-weight: 600; color: var(--text-main); font-size: 0.95rem; }
+    .skill-description { font-size: 0.85rem; color: var(--text-muted); }
+
+    .experience-overview { background: white; border-radius: var(--radius); padding: 2rem; border: 1px solid var(--border); }
+    .experience-item { display: flex; gap: 1rem; margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-light); }
+    .experience-item:last-child { border-bottom: none; }
+    .experience-logo { width: 48px; height: 48px; background: var(--bg); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; border: 1px solid var(--border); }
+    .experience-company { font-weight: 700; color: var(--text-main); }
+    .experience-role { color: var(--primary); font-size: 0.9rem; font-weight: 500; }
+
+    .contact-section { background: var(--card); border-radius: var(--radius); padding: 3rem 2rem; text-align: center; border: 1px solid var(--border); }
+    .social-links { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 1.5rem; }
+    .social-link { padding: 0.75rem 1.5rem; border-radius: var(--radius-sm); color: white; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; transition: 0.2s; }
+    .social-linkedin { background: #0A66C2; }
+    .social-github { background: #24292e; }
+    .social-link:hover { opacity: 0.9; transform: translateY(-2px); }
+
+    /* Badge Types */
+    .badge-data { background: var(--secondary); color: white; }
+    .badge-cloud { background: var(--info); color: white; }
+    .badge-it { background: var(--primary-dark); color: white; }
+</style>
+{% endblock %}
 
 {% block content %}
-<section>
-    <h1>Acerca de este proyecto</h1>
+<div class="profile-container">
+    <div class="profile-hero">
+        <div class="profile-header">
+            <div class="profile-avatar"><i data-lucide="user"></i></div>
+            <h1 class="profile-name">Billy Colina</h1>
+            <p class="profile-title">Ingeniero en Sistemas | Tecnología, Datos y Operaciones</p>
+            
+            <div class="profile-badges">
+                <span class="profile-badge badge-data">
+                    <i data-lucide="database"></i> Data Science
+                </span>
+                <span class="profile-badge badge-cloud">
+                    <i data-lucide="cloud"></i> Cloud & DevOps
+                </span>
+                <span class="profile-badge badge-it">
+                    <i data-lucide="monitor"></i> Infraestructura IT/DT
+                </span>
+            </div>
+            
+            <div class="profile-actions">
+                <a href="https://www.linkedin.com/in/billycolina" class="btn btn-primary" target="_blank">
+                    <i data-lucide="linkedin"></i> Ver Perfil en LinkedIn
+                </a>
+            </div>
+        </div>
+    </div>
 
-    <p>
-        Mi nombre es <strong>Billy Colina</strong> y este proyecto fue desarrollado
-        como entrega final del curso de Python con Django.
-    </p>
+    <section class="content-section">
+        <div class="section-header">
+            <div class="section-icon"><i data-lucide="user-check"></i></div>
+            <h2 class="section-title">Sobre Mí</h2>
+        </div>
+        <div class="summary-card">
+            <p>
+                Ingeniero en Sistemas con más de <span class="summary-highlight">10 años de trayectoria</span> profesional. Mi perfil integra una base técnica en <span class="summary-highlight">Electromecánica Industrial</span> con la especialización en arquitecturas de datos y gestión de infraestructuras IT críticas.
+            </p>
+            <p style="margin-top: 1rem;">
+                He liderado la optimización de procesos mediante <span class="summary-highlight">Python y Shell Scripting</span>, y la creación de soluciones de Business Intelligence en <span class="summary-highlight">Power BI y Qlik Sense</span>. Actualmente enfocado en la aplicación de Ciencia de Datos para la toma de decisiones estratégicas y la transformación digital de las operaciones.
+            </p>
+        </div>
+    </section>
 
-    <p>
-        El objetivo principal es demostrar la construcción de una aplicación web
-        profesional utilizando:
-    </p>
+    <section class="content-section">
+        <div class="section-header">
+            <div class="section-icon"><i data-lucide="cpu"></i></div>
+            <h2 class="section-title">Ecosistema Técnico</h2>
+        </div>
+        <div class="skills-grid">
+            <div class="skill-card">
+                <div class="skill-card-header">
+                    <div class="skill-card-icon"><i data-lucide="bar-chart-3"></i></div>
+                    <h3 class="skill-name">Data & Analytics</h3>
+                </div>
+                <ul class="skill-list">
+                    <li class="skill-item"><i data-lucide="check-circle-2"></i> <span>Power BI & Qlik Sense</span></li>
+                    <li class="skill-item"><i data-lucide="check-circle-2"></i> <span>Python para Ciencia de Datos</span></li>
+                    <li class="skill-item"><i data-lucide="check-circle-2"></i> <span>SQL (PostgreSQL / MySQL / ETL)</span></li>
+                </ul>
+            </div>
+            <div class="skill-card">
+                <div class="skill-card-header">
+                    <div class="skill-card-icon"><i data-lucide="server"></i></div>
+                    <h3 class="skill-name">Infraestructura & Cloud</h3>
+                </div>
+                <ul class="skill-list">
+                    <li class="skill-item"><i data-lucide="check-circle-2"></i> <span>AWS, Azure & Digital Ocean</span></li>
+                    <li class="skill-item"><i data-lucide="check-circle-2"></i> <span>Docker & Kubernetes</span></li>
+                    <li class="skill-item"><i data-lucide="check-circle-2"></i> <span>Windows Server (AD, GPO, DHCP)</span></li>
+                </ul>
+            </div>
+        </div>
+    </section>
 
-    <ul>
-        <li>Django Framework</li>
-        <li>Autenticación y roles de usuario</li>
-        <li>Templates con herencia</li>
-        <li>Vistas basadas en funciones y clases</li>
-        <li>Manejo de formularios y permisos</li>
-        <li>Arquitectura limpia y escalable</li>
-    </ul>
+    <section class="content-section">
+        <div class="section-header">
+            <div class="section-icon"><i data-lucide="briefcase"></i></div>
+            <h2 class="section-title">Experiencia Destacada</h2>
+        </div>
+        <div class="experience-overview">
+            <div class="experience-item">
+                <div class="experience-logo"><i data-lucide="activity"></i></div>
+                <div class="experience-content">
+                    <div class="experience-company">Air Products Indura</div>
+                    <div class="experience-role">Technology Services & Facilities Coordinator</div>
+                </div>
+            </div>
+            <div class="experience-item">
+                <div class="experience-logo"><i data-lucide="landmark"></i></div>
+                <div class="experience-content">
+                    <div class="experience-company">Banesco Banco Universal</div>
+                    <div class="experience-role">Analista de Sistemas TI</div>
+                    <div class="experience-period">Infraestructura y Migraciones Críticas</div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <p>
-        El sistema fue diseñado con un enfoque modular para facilitar futuras
-        ampliaciones como reporting avanzado, APIs o integraciones externas.
-    </p>
-</section>
+    <section class="content-section">
+        <div class="contact-section">
+            <h3 class="section-title">Conectemos Profesionalmente</h3>
+            <p style="color: var(--text-muted); margin-top: 1rem;">Visita mis perfiles profesionales para conocer más sobre mi trabajo y proyectos en el área de sistemas y datos.</p>
+            <div class="social-links">
+                <a href="https://www.linkedin.com/in/billycolina" class="social-link social-linkedin" target="_blank">
+                    <i data-lucide="linkedin"></i> LinkedIn
+                </a>
+                <a href="https://github.com/bcolinam" class="social-link social-github" target="_blank">
+                    <i data-lucide="github"></i> GitHub
+                </a>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+    lucide.createIcons();
+</script>
 {% endblock %}
